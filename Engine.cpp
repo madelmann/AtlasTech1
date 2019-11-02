@@ -380,7 +380,6 @@ void CEngine::ConfigRead(char *Filename)
 	if(!pFile) 
 	{
 		// Display an error message and don't load anything if no file was found
-		char buffer[255] = "";
 		sprintf(buffer, "ERROR[ConfigRead]: '%s' not found!\n", buffer);
 		Console->Output(buffer);
 		return;

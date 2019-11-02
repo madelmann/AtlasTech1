@@ -28,8 +28,9 @@ int CPhysicManager::Delete(CPhysicObject* pobj)
 {
 	for(vector<CPhysicObject>::iterator it = mObjects.begin(); it < mObjects.end(); it += 1)
 	{
-		if(it._Myptr == pobj)
+		if(&(*it) == pobj)
 		{
+			// TODO: implement me
 		}
 	}
 }
@@ -47,7 +48,7 @@ void CPhysicManager::Manage()
 
 	for(vector<CPhysicObject>::iterator it = mObjects.begin(); it < mObjects.end(); it += 1)
 	{
-		if(!IsAtGround(it._Myptr))
+		if(!IsAtGround(&(*it)))
 		{
 			it->DoForce(Physic::Gravity);
 		}

@@ -245,10 +245,10 @@ public:
 	void add(CRGBA c0, CRGBA c1)
 	{
 		uint r, g, b, a;
-		r = c0.R + c1.R;	r = _cpp_min(r, 255U);	R = (uint8)r;
-		g = c0.G + c1.G;	g = _cpp_min(g, 255U);	G = (uint8)g;
-		b = c0.B + c1.B;	b = _cpp_min(b, 255U);	B = (uint8)b;
-		a = c0.A + c1.A;	a = _cpp_min(a, 255U);	A = (uint8)a;
+		r = c0.R + c1.R;	r = (std::min)(r, 255U);	R = (uint8)r;
+		g = c0.G + c1.G;	g = (std::min)(g, 255U);	G = (uint8)g;
+		b = c0.B + c1.B;	b = (std::min)(b, 255U);	B = (uint8)b;
+		a = c0.A + c1.A;	a = (std::min)(a, 255U);	A = (uint8)a;
 	}
 
 	/**
@@ -257,10 +257,10 @@ public:
 	void sub(CRGBA c0, CRGBA c1)
 	{
 		sint r, g, b, a;
-		r = c0.R - c1.R;	r = _cpp_max(r, 0);	R = (uint8)r;
-		g = c0.G - c1.G;	g = _cpp_max(g, 0);	G = (uint8)g;
-		b = c0.B - c1.B;	b = _cpp_max(b, 0);	B = (uint8)b;
-		a = c0.A - c1.A;	a = _cpp_max(a, 0);	A = (uint8)a;
+		r = c0.R - c1.R;	r = (std::max)(r, 0);	R = (uint8)r;
+		g = c0.G - c1.G;	g = (std::max)(g, 0);	G = (uint8)g;
+		b = c0.B - c1.B;	b = (std::max)(b, 0);	B = (uint8)b;
+		a = c0.A - c1.A;	a = (std::max)(a, 0);	A = (uint8)a;
 	}
 
 
@@ -308,17 +308,17 @@ public:
 	void addRGBOnly(CRGBA c0, CRGBA c1)
 	{
 		uint r, g, b;
-		r = c0.R + c1.R;	r = _cpp_min(r, 255U);	R = (uint8)r;
-		g = c0.G + c1.G;	g = _cpp_min(g, 255U);	G = (uint8)g;
-		b = c0.B + c1.B;	b = _cpp_min(b, 255U);	B = (uint8)b;
+		r = c0.R + c1.R;	r = (std::min)(r, 255U);	R = (uint8)r;
+		g = c0.G + c1.G;	g = (std::min)(g, 255U);	G = (uint8)g;
+		b = c0.B + c1.B;	b = (std::min)(b, 255U);	B = (uint8)b;
 	}
 	/// see sub()
 	void subRGBOnly(CRGBA c0, CRGBA c1)
 	{
 		sint r, g, b;
-		r = c0.R - c1.R;	r = _cpp_max(r, 0);	R = (uint8)r;
-		g = c0.G - c1.G;	g = _cpp_max(g, 0);	G = (uint8)g;
-		b = c0.B - c1.B;	b = _cpp_max(b, 0);	B = (uint8)b;
+		r = c0.R - c1.R;	r = (std::max)(r, 0);	R = (uint8)r;
+		g = c0.G - c1.G;	g = (std::max)(g, 0);	G = (uint8)g;
+		b = c0.B - c1.B;	b = (std::max)(b, 0);	B = (uint8)b;
 	}
 	// @}
 

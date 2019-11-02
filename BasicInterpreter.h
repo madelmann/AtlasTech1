@@ -151,7 +151,7 @@ private:
 	int locatex;
 	int locatey;
 
-	char* Filename;
+	//char* Filename;
 };
 
 DWORD WINAPI ThreadEntry(LPVOID Data);

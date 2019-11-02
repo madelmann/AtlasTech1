@@ -26,10 +26,10 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include <gl\gl.h>										// Header File For The OpenGL32 Library
-#include "glext.h"
-#include <gl\glu.h>										// Header File For The GLu32 Library
-#include <gl\glaux.h>									// Header File For The GLaux Library
+#include <gl.h>										// Header File For The OpenGL32 Library
+#include "GLExt.h"
+#include <glu.h>										// Header File For The GLu32 Library
+#include <glaux.h>									// Header File For The GLaux Library
 #include <crtdbg.h>
 
 
