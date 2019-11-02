@@ -439,6 +439,7 @@ void CEngine::Init()
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fMAXAnsitropicFilter);
 	}
 
+/*
 	// Check for VSync extension
 	if(CheckOpenGLExtension("WGL_EXT_swap_control"))
 	{
@@ -448,6 +449,7 @@ void CEngine::Init()
 		glGetSwapIntervalEXT = (PFNWGLEXTGETSWAPINTERVALPROC)
 		wglGetProcAddress("wglGetSwapIntervalEXT");
 	}
+*/
 
 	// Check for occlusion query extension
 	if(CheckOpenGLExtension("GL_ARB_occlusion_query"))

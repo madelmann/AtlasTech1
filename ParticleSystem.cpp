@@ -524,7 +524,7 @@ void CParticleSystem::SetBillboarding(int billboarding)
 //-----------------------------------------------------------------------------
 int CParticleSystem::Update(float fElpasedTime)
 {
-    Particle  *pParticle;
+    Particle  *pParticle = NULL;
     Particle **ppParticle;
     Plane     *pPlane;
     Plane    **ppPlane;
