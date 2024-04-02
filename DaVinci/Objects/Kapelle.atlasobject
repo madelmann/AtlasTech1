@@ -1,0 +1,8 @@
+// Kapelle atlas game object (static)
+MATERIAL default.material
+MESH Kapelle
+MESHTYPE 3ds
+//NORMALMAP default_normal.jpg
+SCALE 1.0
+//SHADER BumpMap
+TEXTURE Kapelle.jpg

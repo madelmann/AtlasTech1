@@ -1,0 +1,4 @@
+void Disconnect()
+ 
+   Disconnects the client from to connected server.
+ 

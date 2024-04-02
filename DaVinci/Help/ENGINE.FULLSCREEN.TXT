@@ -1,0 +1,6 @@
+void ENGINE.FULLSCREEN(boolint fullscreen)
+ 
+   Switches between full screen and windowed mode:
+   0 = windowed
+   1 = full screen
+ 

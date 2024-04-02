@@ -1,0 +1,12 @@
+TELL Welcome adventurer in the ancient lands of DaVinci!
+TELL 
+TELL Open lands full of tresures and evil demons ly at your feets.
+REGION.LOCK
+
+BOT.ADD Alita
+BOT.SETPOSITION 0.0 0.0
+BOT.WAYPOINT.ADD 0.0 0.0
+BOT.WAYPOINT.ADD 0.0 99.0
+BOT.WAYPOINT.ADD 99.0 99.0
+
+BASIC.LOAD TEST

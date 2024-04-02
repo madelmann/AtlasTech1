@@ -1,0 +1,4 @@
+void Quit()
+ 
+   Quits the game
+ 

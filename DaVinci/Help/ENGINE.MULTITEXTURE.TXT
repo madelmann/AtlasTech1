@@ -1,0 +1,6 @@
+void ENGINE.MULTITEXTURE(boolint multitexture)
+ 
+   Enables / disables multitexturing
+   0 = Disabled
+   1 = Enabled
+ 

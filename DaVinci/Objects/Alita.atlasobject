@@ -1,0 +1,6 @@
+// Alita atlas game object (animated)
+MATERIAL Eye.material
+MESH Alita
+MESHTYPE md2
+NORMALMAP default_normal.jpg
+SHADER BumpMap

@@ -1,0 +1,7 @@
+void Help(string command)
+ 
+   If followed by a command it displays detailed
+   information about this command.
+   If followed by nothing a list of all availible
+   commands will be printed out.
+ 

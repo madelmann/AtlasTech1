@@ -1,0 +1,12 @@
+NUMPOLLIES 2
+
+// Polygon 0
+// Triangle 1
+ 0.0 6.4 3.2 0.0 0.0 Bullet.bmp
+ -3.2 6.4 -6.4 0.0 3.75 Bullet.bmp
+ -3.2 0.0 -6.4 0.0 3.75 Bullet.bmp
+
+// Triangle 2
+ 0.0 6.4 3.2 0.0 0.0 Bullet.bmp
+ 0.0 0.0 3.2 0.0 0.0 Bullet.bmp
+ -3.2 0.0 -6.4 0.0 3.75 Bullet.bmp

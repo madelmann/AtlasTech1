@@ -1,0 +1,7 @@
+// Dummy script
+ENGINE.SCRIPTSEQUENCE 1
+
+// here goes the script...
+// during this the player can not interact with the game
+
+ENGINE.SCRIPTSEQUENCE 0

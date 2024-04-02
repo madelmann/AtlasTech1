@@ -1,0 +1,45 @@
+Sound:
+------
+
++OpenAL Initialisierung überarbeiten
++Listenerposition pro Frame setzen (am besten nach der Kamera)
+
+
+Zwischensequenzen:
+------------------
+
+-Kamera
+
+
+
+Heightmap:
+----------
+
+mehr Details in Heightmap:
+
+Heightmap mit höherer Auflösung, bei insgesamt gleicher Größe (OpenGL Dimensionen);
+beim Preprocessing 2 (oder mehr) Quadtree-Detailstufen erstellen,
+für niedre Details nur jeden 2. (oder mehr) Pixel verarbeiten;
+in der Nähe des Spielers die Quadtrees mit mehr Polygonen anzeigen;
+
+
+Terraintexturing:
+
+Texturekoordinaten in einer seperaten Datei speichern. Jedem Face können bis zu 2
+Texturen/Materialien zugewiesen werden, die verwendeten Textur-, Materialnamen werden
+am Ende der Datei in einer Liste gespeichert. Diese Liste wird beim Laden der Heightmap
+abgefragt und alle Texturen geladen, erst danach werden die Texturekoordinaten ausgelesen.
+Im Editor werden den einzelnen Faces die Texturen zugewiesen, dazu wird eine Textur
+ausgewählt, und dann auf das entsprechende Face geklickt.
+
+
+
+Agenda:
+-------
+
+-Bots
+-Heightmap
++Mapformat
+-Netzwerk
+-Shader
+-Sound

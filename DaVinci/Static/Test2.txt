@@ -1,0 +1,45 @@
+NUMPOLLIES 14
+
+// Polygon 0
+// Triangle 1
+ -6.3 12.7 19.2 0.0 0.0 Castletower.
+ -6.3 12.7 19.2 0.0 0.0 Castletower.
+ -6.3 -6.5 -6.4 10.0 0.0 Castletower.
+
+// Triangle 2
+ -6.3 12.7 19.2 0.0 0.0 Castletower.
+ -6.3 -6.5 -6.4 10.0 0.0 Castletower.
+ -6.3 -6.5 -6.4 10.0 0.0 Castletower.
+
+// Polygon 1
+// Triangle 1
+ 25.4 12.8 19.2 0.0 0.0 Castletower.
+ 25.4 12.8 19.2 0.0 0.0 Castletower.
+ 25.4 -6.4 -6.4 10.0 0.0 Castletower.
+
+// Triangle 2
+ 25.4 12.8 19.2 0.0 0.0 Castletower.
+ 25.4 -6.4 -6.4 10.0 0.0 Castletower.
+ 25.4 -6.4 -6.4 10.0 0.0 Castletower.
+
+// Polygon 2
+// Triangle 1
+ 0.1 13.0 -6.4 0.0 0.0 Castletower.
+ 19.3 13.0 -6.4 0.0 7.5 Castletower.
+ 19.3 -6.2 -6.4 0.0 7.5 Castletower.
+
+// Triangle 2
+ 0.1 13.0 -6.4 0.0 0.0 Castletower.
+ 0.1 -6.2 -6.4 0.0 0.0 Castletower.
+ 19.3 -6.2 -6.4 0.0 7.5 Castletower.
+
+// Polygon 3
+// Triangle 1
+ -0.5 -6.2 19.2 0.0 0.0 Castletower.
+ 18.7 -6.2 19.2 0.0 7.5 Castletower.
+ 18.7 13.0 19.2 0.0 7.5 Castletower.
+
+// Triangle 2
+ -0.5 -6.2 19.2 0.0 0.0 Castletower.
+ -0.5 13.0 19.2 0.0 0.0 Castletower.
+ 18.7 13.0 19.2 0.0 7.5 Castletower.

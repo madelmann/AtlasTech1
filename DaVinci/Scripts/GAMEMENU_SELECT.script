@@ -1,0 +1,6 @@
+// define game.map menu
+
+// reset main menu
+SCRIPT.EXECUTE GAMEMENU.script
+
+EDITOR.MODE 0

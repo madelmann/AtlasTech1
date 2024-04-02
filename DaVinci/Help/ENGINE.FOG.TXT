@@ -1,0 +1,5 @@
+void ENGINE.FOG(float fogdensity)
+ 
+   Sets the fogs density. If fogdensity = 0 then fog
+   will be disabled.
+ 

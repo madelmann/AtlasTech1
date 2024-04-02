@@ -1,0 +1,7 @@
+void Connect[(string ip)]
+ 
+   Connects to a server.
+   If an ip address has been specified the client tries to
+   connect to it. If no address has been admitted the one
+   specified in the <GameName>.game will be used.
+ 

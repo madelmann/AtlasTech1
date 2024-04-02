@@ -1,0 +1,130 @@
+Availible console commands:
+ 
+ADVENTURE.LOAD <string>
+BASIC.LOAD <string>
+BOT.WAYPOINT.ADD <float> <float>
+CAMERA.MODE <int>
+CAT <string>
+CLS
+CONNECT [<IP Address>]
+CONSOLE.MODE <int>
+DISCONNECT
+EDITOR.MODE <int>
+ENGINE.CELLSHADING <boolint>
+ENGINE.CLIP <boolint>
+ENGINE.FOV <float>
+ENGINE.FRUSTUM <boolint>
+ENGINE.FULLSCREEN <boolint>
+ENGINE.JUMPHEIGHT <int>
+ENGINE.MULTITEXTURING <boolint>
+ENGINE.RAIN <boolint>
+ENGINE.SCREENHEIGHT <int>
+ENGINE.SCREENWIDTH <int>
+ENGINE.SHADOWS <int>
+ENGINE.VIEWWIDTH <int>
+ENGINE.VSYNC <boolint>
+ENTITY.SCALE <float>
+ENTITY.TRANSLATION <float> <float> <float>
+FLORA.RESCALE <float>
+FLORA.SPREAD <string> <int>
+GAME.ALLOWEDITOR <boolint>
+GAME.LOAD <string>
+GAME.NAME <string>
+GAME.NEW
+GAME.PLAYERMODEL <string>
+GAME.PLAYERNAME <string>
+GAME.RESUME
+GAME.SAVE <string>
+GAME.SCRIPTSEQUENCE <boolint>
+GAME.STARTMAP <string>
+GAME.TYPE <int>
+HELP
+HELP <Command>
+KICK <int>
+LIGHT <int> <boolint> <int> <int> <int> <boolint>
+LOCALPLAYER <int>
+MAP.ALPHAMAP <string>
+MAP.AMBIENTCOLOR <float> <float> <float>
+MAP.BASETEXTURE <string>
+MAP.FLOOR <string>
+MAP.FLOOR.OFFSET <float>
+MAP.FOG.AFFECTSSKYBOX <boolint>
+MAP.FOG.DENSITY <float>
+MAP.HEIGHTMAP <string>
+MAP.LOAD <string>
+MAP.NEW
+MAP.ROOF <string>
+MAP.ROOF.OFFSET <float>
+MAP.SAVE <string>
+MAP.SECONDTEXTURE <string>
+MAP.WATER.COLOR <float> <float> <float>
+MAP.WATER.ENABLED <boolint>
+MAP.WATER.FLOWSPEED <float>
+MAP.WATER.HEIGHT <float>
+MAP.WATER.REFLECTIONS <boolint>
+MAP.WATER.REFRACTIONS <boolint>
+MAP.WATER.WAVEHEIGHT <float>
+MAP.WATER.WAVEINTERVAL <int>
+MAP.WIND <float> <float> <float>
+MENU.ACTIONKEY <int>
+MENU.ADD
+MENU.BACK <string>
+MENU.CAPTION <string>
+MENU.CLEAR
+MENU.COLOR <float> <float> <float>
+MENU.POSITION <float> <float>
+MENU.SCRIPT <string>
+MENU.SCRIPTCOMMAND <string> [<string>]
+MENU.SHADOWCOLOR <float> <float> <float>
+MULTIPLAYER.SERVER <IP address>
+OBJECT.MOVE <int> <float> <float> <float>
+OBJECT.ROTATE <int> <float> <float> <float>
+OBJECT.SETPOSTION <int> <float> <float> <float>
+OBJECT.SETROTATION <int> <float> <float> <float>
+OBJECT.SPAWN <string> <float> <float> <float>
+OBJECT.TIMED_MOVE <int> <float> <float> <float> <int>
+OBJECT.TIMED_ROTATE <int> <float> <float> <float> <int>
+PARTICLE.AREA <float> <float> <float>
+PARTICLE.COLOR <float> <float> <float>
+PARTICLE.FADEIN <float>
+PARTICLE.FADEOUT <float>
+PARTICLE.GRAVITY <float> <float> <float>
+PARTICLE.LIVECYCLE <float>
+PARTICLE.LOCK
+PARTICLE.LOOP <boolint>
+PARTICLE.MATERIAL <string>
+PARTICLE.MAXPARTICLES <int>
+PARTICLE.POSITION <float> <float> <float>
+PARTICLE.RELEASE <int>
+PARTICLE.RELEASEINTERVAL <float>
+PARTICLE.SIZE <float>
+PARTICLE.TEXTURE <string>
+PARTICLE.VELOCITY <float> <float> <float>
+PARTICLE.VELOCITYVAR <float>
+PLAYER.ADD [<string>]
+PLAYER.MODEL <string>
+PLAYER.NAME <string>
+PLAYER.SETACTIVE <int>
+PLAYER.SETPOSITION <float> <float>
+PLAYER.STARTNAME <string>
+PLAYER.TEAM <int>
+QUIT
+REGION.ADD <int> <float> <float> <float> <float> <float> <float> <string>
+REGION.LOCK
+REMOTE <string>
+ROOF.LOAD <string>
+SAY <string>
+SCRIPT.EXECUTE <string>
+SCRIPT.EXECUTECOMMAND <string>
+SERVER <IP address>
+SERVER.MAPCHANGE <string>
+SERVER.SHOWGAMES
+SOUND.PLAY <string>
+SOUND.PLAYLOOP <string>
+SOUND.STOPALL
+STATISTICS.SORTBY <int>
+TELL <string>
+TERRAIN.LOAD <string>
+TEXTURE.APPLY
+TEXTURE.FILTER <int>
+TEXTURE.SHOW

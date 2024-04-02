@@ -1,0 +1,45 @@
+Mods - HowTo:
+-------------
+
+Um ein Atlas-Mod erstellen und spielen zu können benötigt man nur die Datei Atlas.exe,
+die DLL alut.dll, sowie die Dateien water.frag und water.vert, alles andere kann man 
+entweder vom Original Datenordner kopieren oder selbst erstellen.
+
+Der Start eines Mods funktioniert wie folgt:
+
+Eine Verknüpfung auf die Atlas.exe erstellen und unter "Ziel" den Parameter
+
+	+game <ModName>
+
+hinzufügen. Damit gibt man Atlas an welchen Datenordner es verwenden soll. Fertig.
+
+
+
+Ausgangspunkt jedes Mods ist der Datenordner, dieser muss im Verzeichnis der Atlas.exe
+Datei liegen. Die Verzeichnisstruktur muss folgendermaßen aussehen:
+
+<ModName>\Audio
+[<ModName>\Help]		// wird nur für die Konsole benötigt, kann also weggelassen werden
+<ModName>\Maps
+<ModName>\Materials
+<ModName>\Models
+<ModName>\Objects
+<ModName>\Particles
+<ModName>\Scripts
+<ModName>\Static
+<ModName>\Terrain
+<ModName>\Textures
+<ModName>\Video
+<ModName>\Weapons
+<ModName>\<ModName>.game	// Konfigurationsdatei
+
+Automatisch wird beim 1. Start eine Keybindigs-Datei ("Keybinding.key") erstellt sofern
+sie nicht schon vorhanden ist.
+
+Die Verzeichnisse Audio, Materials, Models, Objects, Particles, Static, Scripts, Terrain, Textures 
+und Weapons finden sich auch in jeder Map wieder. Alle Dateien darin können nur innerhalb der 
+jeweiligen Map angesprochen werden, was das Ausrollen neuer Maps vereinfacht, da neue Modelle oder 
+Objekte nicht auf die bereits vorhandenen Ordner des Spiels verteilt sondern nur zentral abgelegt 
+werden müssen. So gesehen ist eigentlich jede Map ein "Mod".
+Werden in einer Map Daten verwendet die bereits im Original vorkommen müssen diese nicht zusätzlich
+nochmal mit der Map ausgeliefert werden sondern können von allen Maps geteilt werden.

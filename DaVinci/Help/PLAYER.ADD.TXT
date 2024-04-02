@@ -1,0 +1,4 @@
+void Player.Add()
+ 
+   Spawns a new player at the current position.
+ 
