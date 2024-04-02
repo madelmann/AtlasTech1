@@ -72,11 +72,11 @@ public:
 
 	void SetBillboarding(int billboarding);
 
-	void SetMaxParticles( DWORD dwMaxParticles ) { m_dwMaxParticles = dwMaxParticles; }
-	DWORD GetMaxParticles( void ) { return m_dwMaxParticles; }
+	void SetMaxParticles( unsigned long dwMaxParticles ) { m_dwMaxParticles = dwMaxParticles; }
+	unsigned long GetMaxParticles( void ) { return m_dwMaxParticles; }
 
-	void SetNumToRelease( DWORD dwNumToRelease ) { m_dwNumToRelease = dwNumToRelease; }
-	DWORD GetNumToRelease( void ) { return m_dwNumToRelease; }
+	void SetNumToRelease( unsigned long dwNumToRelease ) { m_dwNumToRelease = dwNumToRelease; }
+	unsigned long GetNumToRelease( void ) { return m_dwNumToRelease; }
 
 	void SetReleaseInterval( float fReleaseInterval ) { m_fReleaseInterval = fReleaseInterval; }
 	float GetReleaseInterval( void ) { return m_fReleaseInterval; }
@@ -134,7 +134,7 @@ private:
 	Particle   *m_pActiveList;
 	Particle   *m_pFreeList;
 	Plane      *m_pPlanes;
-	DWORD       m_dwActiveCount;
+	unsigned long       m_dwActiveCount;
 	float       m_fCurrentTime;
 	float       m_fLastUpdate;
 	float       m_fMaxPointSize;
@@ -146,8 +146,8 @@ private:
 	bool		m_bBlend;
 	bool		m_GlobalGravity;
 	bool		m_bPolygon;
-	DWORD       m_dwMaxParticles;
-	DWORD       m_dwNumToRelease;
+	unsigned long       m_dwMaxParticles;
+	unsigned long       m_dwNumToRelease;
 	float		m_fAlpha;
 	float		m_fFadeIn;
 	float		m_fFadeOut;

@@ -14,6 +14,7 @@
 #endif
 // Memory leak check - End
 
+#include <SDL.h>
 #include <winsock2.h>
 #include <windows.h>
 #include <stdio.h>
@@ -53,9 +54,9 @@ extern char			g_sEditMode[255];
 
 
 #define MAX_THREADS	8
-extern DWORD		g_dwThreadId[MAX_THREADS];
-extern HANDLE		g_hThread[MAX_THREADS];
-extern int			g_iThreadCount;
+extern unsigned long    g_dwThreadId[MAX_THREADS];
+extern HANDLE		    g_hThread[MAX_THREADS];
+extern int			    g_iThreadCount;
 
 
 #include "Tools.h"
@@ -69,7 +70,7 @@ extern CGame Game;
 bool bSetupPixelFormat(HDC hdc);																// This allows us to configure our window for OpenGL and backbuffering
 void Cat(char *Filename);
 void ChangeToFullScreen();																		// This changes the screen to full screen mode
-HWND CreateMyWindow(char* strWindowName, int width, int height, DWORD dwStyle, bool bFullScreen, HINSTANCE hInstance);	// This is our own function that makes creating a window modular and easy
+HWND CreateMyWindow(char* strWindowName, int width, int height, unsigned long dwStyle, bool bFullScreen, HINSTANCE hInstance);	// This is our own function that makes creating a window modular and easy
 bool CreateTexture(UINT &texture, char* strFileName);											// This creates a texture map from a file name and a reference to a UINT to store it
 void ConfigRead(char sGame[255]);
 void DeInit();																					// This frees all our memory in our program

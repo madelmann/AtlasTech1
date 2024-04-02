@@ -180,7 +180,7 @@ void CBasicInterpreter::SleepCMD()
 	get_token();
 	/* find the label to call */
 	
-	DWORD ms;
+	unsigned long ms;
 	sscanf(token, "%d", &ms);
 
 	Sleep(ms);

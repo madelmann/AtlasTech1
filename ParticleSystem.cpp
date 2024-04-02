@@ -656,7 +656,7 @@ int CParticleSystem::Update(float fElpasedTime)
         m_fLastUpdate = m_fCurrentTime;
 
         // Emit new particles at specified flow rate...
-		for( DWORD i = 0; i < m_dwNumToRelease; i += 1 )
+		for( unsigned long i = 0; i < m_dwNumToRelease; i += 1 )
         {
             // Do we have any free particles to put back to work?
             if( m_pFreeList )

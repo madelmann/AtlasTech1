@@ -11,8 +11,8 @@ public:
 	CChatMessage();
 	~CChatMessage();
 
-	DWORD lTickDuration;
-	DWORD lTickStart;
+	unsigned long lTickDuration;
+	unsigned long lTickStart;
 	char Message[255];
 };
 

@@ -143,7 +143,7 @@ void ChangeToFullScreen()
 /////
 ///////////////////////////////// CREATE MY WINDOW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-HWND CreateMyWindow(char* strWindowName, int width, int height, DWORD dwStyle, bool bFullScreen, HINSTANCE hInstance)
+HWND CreateMyWindow(char* strWindowName, int width, int height, unsigned long dwStyle, bool bFullScreen, HINSTANCE hInstance)
 {
 	HWND hWnd;
 	WNDCLASS wndclass;

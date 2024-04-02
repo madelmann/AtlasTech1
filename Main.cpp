@@ -9,9 +9,9 @@
 #include "Main.h"																// This includes our main header file
 
 
-DWORD		g_dwThreadId[MAX_THREADS];
-HANDLE		g_hThread[MAX_THREADS];
-int			g_iThreadCount = 0;
+unsigned long	g_dwThreadId[MAX_THREADS];
+HANDLE			_hThread[MAX_THREADS];
+int				g_iThreadCount = 0;
 
 
 char		g_sGameName[255]		= "DaVinci\\";
@@ -1666,7 +1666,7 @@ int ProcessCommand(char cmd[255])
 	}
 	if(strcmpi(cmdstr, "PARTICLE.MAXPARTICLES") == 0)
     {
-		DWORD m = 0;
+		unsigned long m = 0;
 
 		sscanf(cmd, "PARTICLE.MAXPARTICLES %d", &m);
 		g_Manager_ParticleSystem.Object[g_Manager_ParticleSystem.iActive].SetMaxParticles(m);
@@ -1694,7 +1694,7 @@ int ProcessCommand(char cmd[255])
 	//}
 	if(strcmpi(cmdstr, "PARTICLE.RELEASE") == 0)
     {
-		DWORD r = 0;
+		unsigned long r = 0;
 
 		sscanf(cmd, "PARTICLE.RELEASE %d", &r);
 		g_Manager_ParticleSystem.Object[g_Manager_ParticleSystem.iActive].SetNumToRelease(r);
