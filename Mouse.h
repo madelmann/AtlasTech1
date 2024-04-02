@@ -9,12 +9,12 @@ namespace MouseSpace {
 
 using namespace std;
 
-typedef enum MouseState {
+typedef enum {
 	None = 0,
 	Down = 1,
 	Up = 2,
 	Click = 3
-};
+} MouseState_t;
 
 
 class CMouse
@@ -32,16 +32,16 @@ public:
 		mp3d.z = 0.0f;
 	}
 
-	MouseState	Button1;
-	MouseState	Button2;
-	MouseState	Button3;
-	double		Button1Begin;
-	double		Button2Begin;
-	double		Button3Begin;
-	POINT		gmp;
-	POINT		mp;
-	CVector3	mp3d;
-	POINT		Tile;
+	MouseState_t	Button1;
+	MouseState_t	Button2;
+	MouseState_t	Button3;
+	double			Button1Begin;
+	double			Button2Begin;
+	double			Button3Begin;
+	POINT			gmp;
+	POINT			mp;
+	CVector3		mp3d;
+	POINT			Tile;
 };
 
 }

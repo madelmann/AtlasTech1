@@ -875,7 +875,7 @@ int ProcessCommand(char cmd[255])
     }
     if(strcmpi(cmdstr, "BOT.NAME") == 0)
     {
-	    sscanf(cmd, "BOT.NAME %s", &g_Manager_Bot.Bot[g_Manager_Bot.iActive].Player->mName);
+	    sscanf(cmd, "BOT.NAME %s", g_Manager_Bot.Bot[g_Manager_Bot.iActive].Player->mName);
 
 		/*
 	    if(peer == NULL)
@@ -961,8 +961,9 @@ int ProcessCommand(char cmd[255])
 		    sprintf(sServerIP, "%d.%d.%d.%d", (int)ip[0], (int)ip[1], (int)ip[2], (int)ip[3]);
 	    }
 
+		SocketDescriptor descriptor;
 	    peer = RakNetworkFactory::GetRakPeerInterface();
-	    peer->Startup(1, 30, &SocketDescriptor(), 1);
+	    peer->Startup(1, 30, &descriptor, 1);
 	    peer->Connect(sServerIP, SERVER_PORT, 0, 0);
 
 	    REGISTER_STATIC_RPC(peer, ProcessNetMessage);
@@ -1003,15 +1004,15 @@ int ProcessCommand(char cmd[255])
 	if(strcmpi(cmdstr, "ENGINE.ANTIALIAS") == 0)
     {
 	    sscanf(cmd, "ENGINE.ANTIALIAS %i", &Engine->iAntialias);
-		sscanf(cmd, "ENGINE.ANTIALIAS %i", &Engine->bPointAndLineAntialiasing);
+		sscanf(cmd, "ENGINE.ANTIALIAS %i", &(int32_t)Engine->bPointAndLineAntialiasing);
     }
     if(strcmpi(cmdstr, "ENGINE.CELLSHADING") == 0)
     {
-	    sscanf(cmd, "ENGINE.CELLSHADING %i", &Engine->bCellShading);
+	    sscanf(cmd, "ENGINE.CELLSHADING %i", &(int32_t)Engine->bCellShading);
     }
     if(strcmpi(cmdstr, "ENGINE.CLIP") == 0)
     {
-	    sscanf(cmd, "ENGINE.CLIP %i", &Engine->bClipping);
+	    sscanf(cmd, "ENGINE.CLIP %i", &(int32_t)Engine->bClipping);
     }
 	if(strcmpi(cmdstr, "ENGINE.FOV") == 0)
     {
@@ -1020,11 +1021,11 @@ int ProcessCommand(char cmd[255])
     }
     if(strcmpi(cmdstr, "ENGINE.FRUSTUM") == 0)
     {
-	    sscanf(cmd, "ENGINE.FRUSTUM %i", &Engine->bFrustumCulling);
+	    sscanf(cmd, "ENGINE.FRUSTUM %i", &(int32_t)Engine->bFrustumCulling);
     }
     if(strcmpi(cmdstr, "ENGINE.FULLSCREEN") == 0)
     {
-	    sscanf(cmd, "ENGINE.FULLSCREEN %i", &Engine->bFullScreen);
+	    sscanf(cmd, "ENGINE.FULLSCREEN %i", &(int32_t)Engine->bFullScreen);
 
 		if(Engine->bFullScreen)
 			ChangeToFullScreen();							// Go to full screen
@@ -1037,7 +1038,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "ENGINE.LIGHTMODELTWOSIDED") == 0)
     {
-	    sscanf(cmd, "ENGINE.LIGHTMODELTWOSIDED %i", &Engine->bLightModelTwoSided);
+	    sscanf(cmd, "ENGINE.LIGHTMODELTWOSIDED %i", &(int32_t)Engine->bLightModelTwoSided);
 		Engine->SetLightModel(Engine->bLightModelTwoSided);
     }
 	if(strcmpi(cmdstr, "ENGINE.LOD") == 0)
@@ -1054,7 +1055,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "ENGINE.MULTITEXTURING") == 0)
     {
-	    sscanf(cmd, "ENGINE.MULTITEXTURING %i", &Engine->bMultiTexturing);
+	    sscanf(cmd, "ENGINE.MULTITEXTURING %i", &(int32_t)Engine->bMultiTexturing);
     }
 	if(strcmpi(cmdstr, "ENGINE.SCREENHEIGHT") == 0)
     {
@@ -1072,7 +1073,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "ENGINE.SPHEREBOUNDINGS") == 0)
     {
-	    sscanf(cmd, "ENGINE.SPHEREBOUNDINGS %i", &Engine->bSphereBoundings);
+	    sscanf(cmd, "ENGINE.SPHEREBOUNDINGS %i", &(int32_t)Engine->bSphereBoundings);
     }
     if(strcmpi(cmdstr, "ENGINE.VIEWWIDTH") == 0)
     {
@@ -1080,7 +1081,7 @@ int ProcessCommand(char cmd[255])
     }
     if(strcmpi(cmdstr, "ENGINE.VSYNC") == 0)
     {
-	    sscanf(cmd, "ENGINE.VSYNC %i", &Engine->bVSync);
+	    sscanf(cmd, "ENGINE.VSYNC %i", &(int32_t)Engine->bVSync);
 
 	    SetVSyncState(Engine->bVSync);
     }
@@ -1113,7 +1114,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "GAME.ALLOWEDITOR") == 0)
     {
-	    sscanf(cmd, "GAME.ALLOWEDITOR %d", &Game.bAllowEditor);
+	    sscanf(cmd, "GAME.ALLOWEDITOR %d", &(int32_t)Game.bAllowEditor);
 
 		if(Game.bAllowEditor)
 			Editor->Allow();
@@ -1173,7 +1174,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "GAME.SCRIPTSEQUENCE") == 0)
 	{
-	    sscanf(cmd, "GAME.SCRIPTSEQUENCE %i", &Game.bScriptSequence);
+	    sscanf(cmd, "GAME.SCRIPTSEQUENCE %i", &(int32_t)Game.bScriptSequence);
 		g_Camera.SetSequencePosition(g_Camera.Position());
 		g_Camera.SetSequenceView(g_Camera.View());
 	}
@@ -1237,7 +1238,7 @@ int ProcessCommand(char cmd[255])
 		bool enabled;
 		CVector3 pos;
 		CLight::LightMode_t mode;
-		sscanf(cmd, "LIGHT %i %i %f %f %f %i", &iLight, &enabled, &pos.x, &pos.y, &pos.z, &mode);
+		sscanf(cmd, "LIGHT %i %i %f %f %f %i", &iLight, &(int32_t)enabled, &pos.x, &pos.y, &pos.z, &mode);
 
 		if(enabled) {
 			Light[iLight].setMode(mode);
@@ -1323,7 +1324,7 @@ int ProcessCommand(char cmd[255])
 	}
 	if(strcmpi(cmdstr, "MAP.FOG.AFFECTSSKYBOX") == 0)
     {
-	    sscanf(cmd, "MAP.FOG.AFFECTSSKYBOX %i", &Map.bFogAffectsSkybox);
+	    sscanf(cmd, "MAP.FOG.AFFECTSSKYBOX %i", &(int32_t)Map.bFogAffectsSkybox);
     }
     if(strcmpi(cmdstr, "MAP.FOG.DENSITY") == 0)
     {
@@ -1397,7 +1398,7 @@ int ProcessCommand(char cmd[255])
 	}
 	if(strcmpi(cmdstr, "MAP.WATER.ENABLED") == 0)
     {
-	    sscanf(cmd, "MAP.WATER.ENABLED %i", &Map.bWaterEnabled);
+	    sscanf(cmd, "MAP.WATER.ENABLED %i", &(int32_t)Map.bWaterEnabled);
     }
 	if(strcmpi(cmdstr, "MAP.WATER.FLOWSPEED") == 0)
     {
@@ -1412,15 +1413,15 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "MAP.WATER.NORMALS") == 0)
     {
-	    sscanf(cmd, "MAP.WATER.NORMALS %i", &Map.bWaterNormals);
+	    sscanf(cmd, "MAP.WATER.NORMALS %i", &(int32_t)Map.bWaterNormals);
     }
 	if(strcmpi(cmdstr, "MAP.WATER.REFLECTIONS") == 0)
     {
-	    sscanf(cmd, "MAP.WATER.REFLECTIONS %i", &Map.bWaterReflections);
+	    sscanf(cmd, "MAP.WATER.REFLECTIONS %i", &(int32_t)Map.bWaterReflections);
     }
 	if(strcmpi(cmdstr, "MAP.WATER.REFRACTIONS") == 0)
     {
-	    sscanf(cmd, "MAP.WATER.REFRACTIONS %i", &Map.bWaterRefractions);
+	    sscanf(cmd, "MAP.WATER.REFRACTIONS %i", &(int32_t)Map.bWaterRefractions);
     }
 	if(strcmpi(cmdstr, "MAP.WATER.WAVEHEIGHT") == 0)
     {
@@ -1647,7 +1648,7 @@ int ProcessCommand(char cmd[255])
     {
 		bool g = 0;
 
-		sscanf(cmd, "PARTICLE.GLOBALGRAVITY %i", &g);
+		sscanf(cmd, "PARTICLE.GLOBALGRAVITY %i", &(int32_t)g);
 		g_Manager_ParticleSystem.Object[g_Manager_ParticleSystem.iActive].SetGlobalGravity(g);
 	}
 	if(strcmpi(cmdstr, "PARTICLE.GRAVITY") == 0)
@@ -1672,7 +1673,7 @@ int ProcessCommand(char cmd[255])
     {
 		bool loop = false;
 
-		sscanf(cmd, "PARTICLE.LOOP %d", &loop);
+		sscanf(cmd, "PARTICLE.LOOP %d", &(int32_t)loop);
 		g_Manager_ParticleSystem.Object[g_Manager_ParticleSystem.iActive].SetLoop(loop);
 	}
 	if(strcmpi(cmdstr, "PARTICLE.MATERIAL") == 0)
@@ -1693,7 +1694,7 @@ int ProcessCommand(char cmd[255])
     {
 		bool p = 0;
 
-		sscanf(cmd, "PARTICLE.POLYGON %d", &p);
+		sscanf(cmd, "PARTICLE.POLYGON %d", &(int32_t)p);
 		g_Manager_ParticleSystem.Object[g_Manager_ParticleSystem.iActive].SetPolygonMode(p);
 	}
 	if(strcmpi(cmdstr, "PARTICLE.POSITION") == 0)
@@ -1788,7 +1789,7 @@ int ProcessCommand(char cmd[255])
     }
     if(strcmpi(cmdstr, "PLAYER.NAME") == 0)
     {
-	    sscanf(cmd, "PLAYER.NAME %s", &g_Manager_Player.Player[g_iLocalPlayer].mName);
+	    sscanf(cmd, "PLAYER.NAME %s", g_Manager_Player.Player[g_iLocalPlayer].mName);
 
 	    if(peer == NULL)
 		    return 0;
@@ -1838,7 +1839,7 @@ int ProcessCommand(char cmd[255])
 		float y2 = 0.0f;
 		float z2 = 0.0f;
 
-	    sscanf(cmd, "REGION.ADD %d %f %f %f %f %f %f %s", &b, &x1, &y1, &z1, &x2, &y2, &z2, &buffer);
+	    sscanf(cmd, "REGION.ADD %d %f %f %f %f %f %f %s", &(int32_t)b, &x1, &y1, &z1, &x2, &y2, &z2, &buffer);
 		g_Manager_Region.Add(b, x1, y1, z1, x2, y2, z2, buffer);
     }
 	if(strcmpi(cmdstr, "REGION.LOCK") == 0)
@@ -2045,7 +2046,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "TEXTURE.COMPRESS") == 0)
 	{
-		sscanf(cmd, "TEXTURE.COMPRESS %i", &Engine->bCompressedTextures);
+		sscanf(cmd, "TEXTURE.COMPRESS %i", &(int32_t)Engine->bCompressedTextures);
 	}
 	if(strcmpi(cmdstr, "TEXTURE.FILTER") == 0)
     {
@@ -2780,7 +2781,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		    g_Manager_Player.Player[g_Manager_Player.Count - 1].Spawn("Rhino", 0.0f, 0.0f, 0.0f, 1.0f);
 	    }
 
-	    sscanf(buffer, "%i|%i|%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mId, &g_Manager_Player.Player[iPlayer].iKills, &g_Manager_Player.Player[iPlayer].iDeaths, &g_Manager_Player.Player[iPlayer].mName);
+	    sscanf(buffer, "%i|%i|%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mId, &g_Manager_Player.Player[iPlayer].iKills, &g_Manager_Player.Player[iPlayer].iDeaths, g_Manager_Player.Player[iPlayer].mName);
 	    g_Manager_Statistic.Manage();
 	    break;
     case CLIENT_LOCALPLAYER:
@@ -2865,7 +2866,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		if(iPlayer < 0)
 			break;
 
-	    sscanf(buffer, "%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mId, &g_Manager_Player.Player[iPlayer].mName);
+	    sscanf(buffer, "%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mId, g_Manager_Player.Player[iPlayer].mName);
 
 	    for(i = g_Manager_Player.Count - 1; i < iPlayer; i += 1)
 	    {
