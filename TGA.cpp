@@ -54,26 +54,26 @@ int TGAImg::Load(char* szFilename)
   // Open the specified file
   fIn.open(szFilename,ios::binary);
     
-   if(!fIn.is_open())
+  if(!fIn.is_open())
     return IMG_ERR_NO_FILE;
 
   // Get file size
   fIn.seekg(0,ios_base::end);
-  ulSize=fIn.tellg();
+  ulSize = static_cast<unsigned int>( fIn.tellg() );
   fIn.seekg(0,ios_base::beg);
 
   // Allocate some space
   // Check and clear pData, just in case
-   if(pData)
+  if(pData)
     delete [] pData; 
 
   pData=new unsigned char[ulSize];
 
-   if(pData==NULL)
-    {
+  if(pData==NULL)
+  {
      fIn.close();
      return IMG_ERR_MEM_FAIL;
-    }
+  }
 
   // Read the file into memory
   fIn.read((char*)pData,ulSize);

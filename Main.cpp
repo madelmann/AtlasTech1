@@ -3,27 +3,8 @@
 
 
 #pragma once
-#pragma warning(disable : 4068)
-#pragma warning(disable : 4611)
-#pragma warning(disable : 4996)
-#pragma warning(disable : 6031)
-#pragma warning(disable : 6067)
 
-
-//#include <vld.h>
 #include <cassert>
-
-//// Memory leak check - Begin
-//#define _CRTDBG_MAP_ALLOC
-//#include <stdlib.h>
-//
-//#include <iostream>
-//#include <crtdbg.h>
-//#ifdef _DEBUG
-//#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-//#define new DEBUG_NEW
-//#endif
-//// Memory leak check - End
 
 #include "Main.h"																// This includes our main header file
 
@@ -1921,7 +1902,7 @@ int ProcessCommand(char cmd[255])
 		    g_Manager_Script.Execute(buffer, true, true);
 	    }
     }
-    if(strcmpi(cmdstr, "SCRIPT.EXECUTECOMMAND") == 0)			// muss noch überarbeitet werden!
+    if(strcmpi(cmdstr, "SCRIPT.EXECUTECOMMAND") == 0)			// muss noch ï¿½berarbeitet werden!
     {
 	    if(strcmpi(cmd, cmdstr) != 0)
 	    {

@@ -1,8 +1,5 @@
 #include "Main.h"
 
-#pragma warning(disable : 4611)
-#pragma warning(disable : 4701)
-
 /* Assign a variable a value. */
 void CBasicInterpreter::assignment()
 {
@@ -54,7 +51,7 @@ void CBasicInterpreter::print()
 {
 	int answer;
 	int len = 0, spaces;
-	char last_delim;
+	char last_delim = 0;
 	char output[255] = "";
 
 	do
@@ -194,7 +191,7 @@ void CBasicInterpreter::System()
 {
 	int answer;
 	int len = 0, spaces;
-	char last_delim;
+	char last_delim = 0;
 	char output[255] = "";
 
 	do
@@ -1046,7 +1043,7 @@ void CBasicInterpreter::Reset()
 	locatey = -1;
 }
 
-long WINAPI CBasicInterpreter::Prepare(char *fname)
+long CBasicInterpreter::Prepare(char *fname)
 {
 	char *p_buf = "";
 
@@ -1147,10 +1144,10 @@ long WINAPI CBasicInterpreter::Prepare(char *fname)
 	return 0;
 }
 
-DWORD WINAPI ThreadEntry(LPVOID Data)
+unsigned long ThreadEntry(LPVOID Data)
 {
 	CBasicInterpreter* interpreter = new CBasicInterpreter;
 	interpreter->Prepare((char*)Data);
 
-	return ((DWORD)Data);
+	return (unsigned long)Data;
 }

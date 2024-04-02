@@ -1,6 +1,3 @@
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT						0x0502
-#endif
 
 #ifndef _MAIN_H
 #define _MAIN_H
@@ -28,16 +25,11 @@
 #include <vector>
 #include <gl.h>										// Header File For The OpenGL32 Library
 #include "GLExt.h"
-#include <glu.h>										// Header File For The GLu32 Library
+#include <glu.h>									// Header File For The GLu32 Library
 #include <glaux.h>									// Header File For The GLaux Library
-#include <crtdbg.h>
 
 
 using namespace std;
-
-
-#define WIN32_LEAN_AND_MEAN
-#define VC_EXTRALEAN
 
 
 #define MAX_CLIENTS				32
@@ -77,8 +69,8 @@ extern CGame Game;
 bool bSetupPixelFormat(HDC hdc);																// This allows us to configure our window for OpenGL and backbuffering
 void Cat(char *Filename);
 void ChangeToFullScreen();																		// This changes the screen to full screen mode
-HWND CreateMyWindow(LPSTR strWindowName, int width, int height, DWORD dwStyle, bool bFullScreen, HINSTANCE hInstance);	// This is our own function that makes creating a window modular and easy
-bool CreateTexture(UINT &texture, LPSTR strFileName);											// This creates a texture map from a file name and a reference to a UINT to store it
+HWND CreateMyWindow(char* strWindowName, int width, int height, DWORD dwStyle, bool bFullScreen, HINSTANCE hInstance);	// This is our own function that makes creating a window modular and easy
+bool CreateTexture(UINT &texture, char* strFileName);											// This creates a texture map from a file name and a reference to a UINT to store it
 void ConfigRead(char sGame[255]);
 void DeInit();																					// This frees all our memory in our program
 void Dispatch_MouseDownLeft();

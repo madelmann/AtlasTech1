@@ -41,7 +41,7 @@ void ConfigRead(char sGame[255])
 /////
 ///////////////////////////////// CREATE TEXTURE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-bool CreateTexture(UINT &texture, LPSTR strFileName)
+bool CreateTexture(UINT &texture, char* strFileName)
 {
 	AUX_RGBImageRec *pImage = NULL;
 	FILE *pFile = NULL;
@@ -143,7 +143,7 @@ void ChangeToFullScreen()
 /////
 ///////////////////////////////// CREATE MY WINDOW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-HWND CreateMyWindow(LPSTR strWindowName, int width, int height, DWORD dwStyle, bool bFullScreen, HINSTANCE hInstance)
+HWND CreateMyWindow(char* strWindowName, int width, int height, DWORD dwStyle, bool bFullScreen, HINSTANCE hInstance)
 {
 	HWND hWnd;
 	WNDCLASS wndclass;

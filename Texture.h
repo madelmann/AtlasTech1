@@ -1,11 +1,13 @@
 #ifndef _TEXTURE_H
 #define _TEXTURE_H
 
-
-#include "Main.h"
-#include "Singleton.h"
+// Library includes
 #include <vector>
 #include "jpeglib.h"
+
+// Project includes
+#include "Main.h"
+#include "Singleton.h"
 
 
 class Texture
@@ -106,15 +108,15 @@ public:
 public :
 	void Apply();
 	void clear();
-	void CreateAnimBMPTextures(LPSTR szFileName, int count);
-	GLuint CreateBMPTexture(LPSTR Filename);
-	GLuint CreateBMPTexture1D(LPSTR Filename);
-	GLuint CreateJPGTexture(LPSTR Filename);
+	void CreateAnimBMPTextures(char* szFileName, int count);
+	GLuint CreateBMPTexture(char* Filename);
+	GLuint CreateBMPTexture1D(char* Filename);
+	GLuint CreateJPGTexture(char* Filename);
 	void CreateRenderTexture(UINT textureArray[], int width, int height, int channels, int type, int textureID);
 	GLuint CreateTexture(char* Filename);
-	GLuint CreateTGATexture(LPSTR Filename);
+	GLuint CreateTGATexture(char* Filename);
 	void DecodeJPG(jpeg_decompress_struct* cinfo, tImage *pImageData);					// This decompresses the JPEG and fills in the image data
-	GLuint DeleteTexture(LPSTR Filename);
+	GLuint DeleteTexture(char* Filename);
 	GLuint DeleteTextureByIndex(GLuint index);
 	GLuint getNextId() const;
 	int GetTGABPP(char* Filename);

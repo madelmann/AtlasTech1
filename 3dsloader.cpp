@@ -1,7 +1,8 @@
 
-#include "Main.h"
 #include "3dsloader.h"
 
+
+#include "Main.h"
 
 //>------ Primary Chunk, at the beginning of each file
 #define PRIMARY       0x4D4D
@@ -56,7 +57,6 @@
  *
  *********************************************************/
 
-//char Load3DS(obj_type_ptr p_object, char *p_filename)
 char Load3DS(obj_type *p_object, char *p_filename)
 {
 	int i; //Index variable

@@ -4,9 +4,6 @@
 #define _BASICINTERPRETER_H
 
 
-#include "Main.h"
-
-
 #include "stdio.h"
 #include "setjmp.h"
 #include "math.h"
@@ -80,7 +77,7 @@ public:
 	
 	bool LoadProgram(char *p, char *fname);
 	void Reset();
-	long WINAPI Prepare(char *fname);
+	long Prepare(char *fname);
 
 private:
 	void assignment();
@@ -154,6 +151,6 @@ private:
 	//char* Filename;
 };
 
-DWORD WINAPI ThreadEntry(LPVOID Data);
+unsigned long ThreadEntry(LPVOID Data);
 
 #endif

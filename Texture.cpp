@@ -45,7 +45,7 @@ void CTextureManager::clear()
 	Textures.clear();
 }
 
-void CTextureManager::CreateAnimBMPTextures(LPSTR szFileName, int count)
+void CTextureManager::CreateAnimBMPTextures(char* szFileName, int count)
 {
 	char szBuffer[255] = "";
 
@@ -64,7 +64,7 @@ void CTextureManager::CreateAnimBMPTextures(LPSTR szFileName, int count)
 	}
 }
 
-GLuint CTextureManager::CreateBMPTexture(LPSTR Filename)
+GLuint CTextureManager::CreateBMPTexture(char* Filename)
 {
 	AUX_RGBImageRec *pImage = NULL;
 	FILE *pFile = NULL;
@@ -172,7 +172,7 @@ GLuint CTextureManager::CreateBMPTexture(LPSTR Filename)
 	return Textures.back()->mId;
 }
 
-GLuint CTextureManager::CreateBMPTexture1D(LPSTR Filename)
+GLuint CTextureManager::CreateBMPTexture1D(char* Filename)
 {
 	AUX_RGBImageRec *pImage = NULL;
 	FILE *pFile = NULL;
@@ -262,7 +262,7 @@ GLuint CTextureManager::CreateBMPTexture1D(LPSTR Filename)
 	return texture->mId;
 }
 
-GLuint CTextureManager::CreateJPGTexture(LPSTR Filename)
+GLuint CTextureManager::CreateJPGTexture(char* Filename)
 {
 	struct jpeg_decompress_struct cinfo;
 	tImage *pImage = NULL;
@@ -452,7 +452,7 @@ GLuint CTextureManager::CreateTexture(char* Filename)
 }
 
 // Load a TGA texture
-GLuint CTextureManager::CreateTGATexture(LPSTR Filename)
+GLuint CTextureManager::CreateTGATexture(char* Filename)
 {
 	FILE* pFile;
 	char buffer[255];
@@ -633,7 +633,7 @@ void CTextureManager::DecodeJPG(jpeg_decompress_struct* cinfo, tImage *pImageDat
 	jpeg_finish_decompress(cinfo);
 }
 
-GLuint CTextureManager::DeleteTexture(LPSTR Filename)
+GLuint CTextureManager::DeleteTexture(char* Filename)
 {
 	return DeleteTextureByIndex(IndexOf(Filename));
 }

@@ -221,7 +221,7 @@ void CStaticObject::SetSelectionIndicator()
 	vSelectionIndicator.z = Model.triangle[indexj].vertex[0].z + mPosition.z;
 }
 
-void CStaticObject::Spawn(LPSTR name, float x, float y, float z, float scale)
+void CStaticObject::Spawn(char* name, float x, float y, float z, float scale)
 {
 	bSpawned	 = true;
 	iLowestPoint = LowestPoint();
