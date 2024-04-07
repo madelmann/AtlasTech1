@@ -1,4 +1,12 @@
-#include "Main.h"
+
+// Library includes
+#include <stdio.h>
+#include <cstring>
+#include <Windows.h>
+
+// Project includes
+#include "Console.h"
+#include "Tools.h"
 
 
 CConsole::CConsole()
@@ -122,7 +130,7 @@ bool CConsole::IsVisible() const
 	return bVisible;
 }
 
-void CConsole::KeyPressed(WPARAM Key)
+void CConsole::KeyPressed(unsigned int Key)
 {
 	switch(Key)
 	{

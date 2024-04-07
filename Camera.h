@@ -1,8 +1,10 @@
-#ifndef _CAMERA_H
-#define _CAMERA_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Tools.h"
 
 
 #define CAMERA_MODE_NOTDEFINED	0
@@ -55,6 +57,3 @@ public:
 	void StrafeCamera(float speed);						// This strafes the camera left or right depending on the speed (+/-)
 	void Update();										// This updates the camera's view and other data (Should be called each frame)
 };
-
-
-#endif

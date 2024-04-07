@@ -1,4 +1,9 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "EngineUtils.h"
+#include "PhysicManager.h"
 
 
 CPhysicManager::CPhysicManager()
@@ -26,7 +31,7 @@ void CPhysicManager::Add(CPhysicObject* pobj)
 
 int CPhysicManager::Delete(CPhysicObject* pobj)
 {
-	for(vector<CPhysicObject>::iterator it = mObjects.begin(); it < mObjects.end(); it += 1)
+	for(std::vector<CPhysicObject>::iterator it = mObjects.begin(); it < mObjects.end(); it += 1)
 	{
 		if(&(*it) == pobj)
 		{
@@ -46,7 +51,7 @@ void CPhysicManager::Manage()
 	if(Count <= 0)
 		return;
 
-	for(vector<CPhysicObject>::iterator it = mObjects.begin(); it < mObjects.end(); it += 1)
+	for(std::vector<CPhysicObject>::iterator it = mObjects.begin(); it < mObjects.end(); it += 1)
 	{
 		if(!IsAtGround(&(*it)))
 		{

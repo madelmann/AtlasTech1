@@ -3,12 +3,15 @@
 #ifndef _BASICINTERPRETER_H
 #define _BASICINTERPRETER_H
 
-
+// Library includes
 #include "stdio.h"
 #include "setjmp.h"
 #include "math.h"
 #include "ctype.h"
 #include "stdlib.h"
+
+// Project includes
+
 
 #define NUM_LAB 100
 #define LAB_LEN 10 
@@ -151,6 +154,6 @@ private:
 	//char* Filename;
 };
 
-unsigned long ThreadEntry(LPVOID Data);
+unsigned long ThreadEntry(void* Data);
 
 #endif

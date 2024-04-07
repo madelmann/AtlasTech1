@@ -1,4 +1,12 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "Editor.h"
+#include "EngineUtils.h"
+#include "GLWrapper.h"
+#include "Normals.h"
+#include "StaticObject.h"
 
 
 #define FILENAMELENGTH	13

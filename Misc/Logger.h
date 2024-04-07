@@ -1,5 +1,9 @@
-#ifndef _MISC_LOGGER_H_
-#define _MISC_LOGGER_H_
+
+#pragma once
+
+// Library includes
+
+// Project includes
 
 
 // Memory leak check - Begin
@@ -87,5 +91,3 @@ class InfoPushPopHelper
     snprintf( buffer, MaxInfoLength+1, format, __VA_ARGS__ );   \
     InfoPushPopHelper infoPushPop( buffer );
 
-
-#endif

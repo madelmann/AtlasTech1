@@ -1,6 +1,9 @@
-#ifndef _MATERIALS_H
-#define _MATERIALS_H
 
+#pragma once
+
+// Library includes
+
+// Project includes
 
 #define MAX_MATERIALS			100
 #define VERSION_MATERIAL_1		1
@@ -44,5 +47,3 @@ public:
 	int			iLastUsed;
 	CMaterial	Materials[MAX_MATERIALS];
 };
-
-#endif

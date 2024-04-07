@@ -4,13 +4,16 @@
 
 #pragma once
 
+// Library includes
 #include <cassert>
 
+// Project includes
 #include "Main.h"																// This includes our main header file
+#include "GLWrapper.h"
 
 
 unsigned long	g_dwThreadId[MAX_THREADS];
-HANDLE			_hThread[MAX_THREADS];
+void*			g_hThread[MAX_THREADS];
 int				g_iThreadCount = 0;
 
 
@@ -105,10 +108,380 @@ void Cat(char *Filename)
 	fclose(pFile);
 }
 
+void ConfigRead(char sGame[255])
+{
+	char buffer[255] = "";
+	sprintf(buffer, "%s\\Game.config", sGame);
+
+	FILE* pFile;
+
+	fopen_s(&pFile, buffer, "rt");
+	if (!pFile)
+	{
+		// Display an error message and don't load anything if no file was found
+		sprintf(buffer, "ERROR[ConfigRead]: '%s' not found!\n", buffer);
+		Console->Output(buffer);
+		return;
+	}
+
+	char oneline[255] = "";
+
+	do
+	{
+		sprintf(oneline, "");
+		readstr(pFile, oneline);
+
+		ProcessCommand(oneline);
+	} while (strcmp(oneline, "") != 0);
+
+	fclose(pFile);
+
+	Console->Clear();
+	Console->Output("%s %s\n", Engine->EngineNameString, Engine->EngineVersionString);
+}
+
+
+///////////////////////////////// CREATE TEXTURE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This creates a texture in OpenGL that we can texture map
+/////
+///////////////////////////////// CREATE TEXTURE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+bool CreateTexture(UINT& texture, char* strFileName)
+{
+	AUX_RGBImageRec* pImage = NULL;
+	FILE* pFile = NULL;
+
+	if (!strFileName)
+		return false;
+
+	// Open a file pointer to the BMP file and check if it was found and opened 
+	if (fopen_s(&pFile, strFileName, "rb") != NULL)
+	{
+		// Display an error message saying the file was not found, then return NULL
+		char buffer[255] = "";
+		sprintf(buffer, "ERROR[CreateTexture]: Could not load file '%s'!\n", strFileName);
+		Console->Output(buffer);
+		return NULL;
+	}
+	fclose(pFile);
+
+	// Load the bitmap using the aux function stored in glaux.lib
+	pImage = auxDIBImageLoad(strFileName);
+
+	// Make sure valid image data was given to pImage, otherwise return false
+	if (pImage == NULL)
+		return false;
+
+	// Generate a texture with the associative texture ID stored in the array
+	glGenTextures(1, &texture);
+
+	// This sets the alignment requirements for the start of each pixel row in memory.
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// Bind the texture to the texture arrays index and init the texture
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	// Build Mipmaps (builds different versions of the picture for distances - looks better)
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, pImage->sizeX, pImage->sizeY, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
+
+	//Assign the mip map levels and texture info
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	// Now we need to free the image data that we loaded since openGL stored it as a texture
+
+	if (pImage)										// If we loaded the image
+	{
+		if (pImage->data)							// If there is texture data
+		{
+			free(pImage->data);						// Free the texture data, we don't need it anymore
+		}
+
+		free(pImage);								// Free the image structure
+	}
+
+	// Return a success
+	return true;
+}
+
+
+///////////////////////////////// CHANGE TO FULL SCREEN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This changes the screen to FULL SCREEN
+/////
+///////////////////////////////// CHANGE TO FULL SCREEN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+void ChangeToFullScreen()
+{
+	DEVMODE dmSettings = { 0 };							// Device Mode variable
+
+	// Get current settings -- This function fills in our settings.
+	// This makes sure NT and Win98 machines change correctly.
+	if (!EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dmSettings))
+	{
+		// Display error message if we couldn't get display settings
+		MessageBox(NULL, "Could Not Enum Display Settings", "Error", MB_OK);
+		return;
+	}
+
+	dmSettings.dmPelsWidth = Engine->Screen.Width;				// Selected Screen Width
+	dmSettings.dmPelsHeight = Engine->Screen.Height;			// Selected Screen Height
+	dmSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+	// This function actually changes the screen to full screen.
+	// CDS_FULLSCREEN gets rid of the start Bar.
+	// We always want to get a result from this function to check if we failed.
+	int result = ChangeDisplaySettings(&dmSettings, CDS_FULLSCREEN);
+
+	// Check if we didn't receive a good return message From the function
+	if (result != DISP_CHANGE_SUCCESSFUL) {
+		// Display the error message and quit the program
+		MessageBox(NULL, "Display Mode Not Compatible", "Error", MB_OK);
+		PostQuitMessage(0);
+	}
+}
+
+
+///////////////////////////////// CREATE MY WINDOW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This function creates a window, but doesn't have a message loop
+/////
+///////////////////////////////// CREATE MY WINDOW \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+HWND CreateMyWindow(char* strWindowName, int width, int height, unsigned long dwStyle, bool bFullScreen, HINSTANCE hInstance)
+{
+	HWND hWnd;
+	WNDCLASS wndclass;
+
+	memset(&wndclass, 0, sizeof(WNDCLASS));				// Init the size of the class
+	wndclass.style = CS_HREDRAW | CS_VREDRAW;			// Regular drawing capabilities
+	wndclass.lpfnWndProc = WinProc;						// Pass our function pointer as the window procedure
+	wndclass.hInstance = hInstance;						// Assign our hInstance
+	wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);	// General icon
+	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);		// An arrow for the cursor
+	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);	// A white window
+	wndclass.lpszClassName = "Atlas";					// Assign the class name
+
+	RegisterClass(&wndclass);							// Register the class
+
+	if (bFullScreen && !dwStyle) 						// Check if we wanted full screen mode
+	{													// Set the window properties for full screen mode
+		dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+		ChangeToFullScreen();							// Go to full screen
+		ShowCursor(TRUE);								// Hide the cursor
+	}
+	else if (!dwStyle)									// Assign styles to the window depending on the choice
+		dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+
+	g_hInstance = hInstance;							// Assign our global hInstance to the window's hInstance
+
+	RECT rWindow;
+	rWindow.left = 0;								// Set Left Value To 0
+	rWindow.right = width;							// Set Right Value To Requested Width
+	rWindow.top = 0;								// Set Top Value To 0
+	rWindow.bottom = height;							// Set Bottom Value To Requested Height
+
+	AdjustWindowRect(&rWindow, dwStyle, false);		// Adjust Window To True Requested Size
+
+	// Create the window
+	hWnd = CreateWindow("Atlas", strWindowName, dwStyle, 0, 0,
+		rWindow.right - rWindow.left, rWindow.bottom - rWindow.top,
+		NULL, NULL, hInstance, NULL);
+
+	if (!hWnd)
+		return NULL;									// If we could get a handle, return NULL
+
+	ShowWindow(hWnd, SW_SHOWNORMAL);					// Show the window
+	UpdateWindow(hWnd);									// Draw the window
+
+	SetFocus(hWnd);										// Sets Keyboard Focus To The Window	
+
+	return hWnd;
+}
+
+///////////////////////////////// SET UP PIXEL FORMAT \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This function sets the pixel format for OpenGL.
+/////
+///////////////////////////////// SET UP PIXEL FORMAT \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+bool bSetupPixelFormat(HDC hdc)
+{
+	PIXELFORMATDESCRIPTOR pfd = { 0 };
+	int pixelformat;
+
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);			// Set the size of the structure
+	pfd.nVersion = 1;									// Always set this to 1
+	// Pass in the appropriate OpenGL flags
+	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;// | PFD_SUPPORT_COMPOSITION;
+	pfd.dwLayerMask = PFD_MAIN_PLANE;					// We want the standard mask (this is ignored anyway)
+	pfd.iPixelType = PFD_TYPE_RGBA;						// We want RGB and Alpha pixel type
+	pfd.cColorBits = (BYTE)Engine->Screen.Depth;		// Set color bits per pixels
+	pfd.cDepthBits = (BYTE)Engine->Screen.Depth;		// Depthbits is ignored for RGBA, but we do it anyway
+	pfd.cAccumBits = 0;									// No special bitplanes needed
+	pfd.cStencilBits = 0;								// We desire no stencil bits
+
+	// This gets us a pixel format that best matches the one passed in from the device
+	if ((pixelformat = ChoosePixelFormat(hdc, &pfd)) == FALSE)
+	{
+		MessageBox(NULL, "ChoosePixelFormat failed", "Error", MB_OK);
+		return FALSE;
+	}
+
+	// This sets the pixel format that we extracted from above
+	if (SetPixelFormat(hdc, pixelformat, &pfd) == FALSE)
+	{
+		MessageBox(NULL, "SetPixelFormat failed", "Error", MB_OK);
+		return FALSE;
+	}
+
+	return TRUE;										// Return a success!
+}
+
+
+//////////////////////////// SIZE OPENGL SCREEN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This function resizes the viewport for OpenGL.
+/////
+//////////////////////////// SIZE OPENGL SCREEN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+void SizeOpenGLScreen(int width, int height)			// Initialize The GL Window
+{
+	Engine->Screen.Height = height;
+	Engine->Screen.Width = width;
+
+	if (height == 0)										// Prevent A Divide By Zero error
+	{
+		height = 1;										// Make the Height Equal One
+	}
+
+	glViewport(0, 0, width, height);					// Make our viewport the whole window
+	// We could make the view smaller inside
+	// Our window if we wanted too.
+	// The glViewport takes (x, y, width, height)
+	// This basically means, what are our drawing boundaries
+
+	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
+	glLoadIdentity();									// Reset The Projection Matrix
+
+	// Calculate The Aspect Ratio Of The Window
+	// The parameters are:
+	// (view angle, aspect ration of the width to the height, 
+	//  the closest distance to the camera before it clips, 
+	//  the farthest distance before it stops drawing).
+	gluPerspective(Engine->fFOV, (GLfloat)Engine->Screen.Width / (GLfloat)Engine->Screen.Height, 0.9f, 20480.0f);
+
+	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
+	glLoadIdentity();									// Reset The Modelview Matrix
+}
+
+
+///////////////////////////////// INITIALIZE GL \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This function handles all the initialization for OpenGL.
+/////
+///////////////////////////////// INITIALIZE GL \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+void InitializeOpenGL(int width, int height)
+{
+	g_hDC = GetDC(g_hWnd);								// This sets our global HDC
+	// We don't free this hdc until the end of our program
+	if (!bSetupPixelFormat(g_hDC))						// This sets our pixel format/information
+		PostQuitMessage(0);							// If there's an error, quit
+
+	g_hRC = wglCreateContext(g_hDC);					// This creates a rendering context from our hdc
+	wglMakeCurrent(g_hDC, g_hRC);						// This makes the rendering context we just created the one we want to use
+
+	SizeOpenGLScreen(width, height);					// Setup the screen translations and viewport
+}
+
+
+///////////////////////////////// DE INIT \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This function cleans up and then posts a quit message to the window
+/////
+///////////////////////////////// DE INIT \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+void DeInit()
+{
+	g_Manager_ParticleSystem.Clear();
+
+	if (g_hRC)
+	{
+		wglMakeCurrent(NULL, NULL);						// This frees our rendering memory and sets everything back to normal
+		wglDeleteContext(g_hRC);						// Delete our OpenGL Rendering Context	
+	}
+
+	if (g_hDC)
+		ReleaseDC(g_hWnd, g_hDC);						// Release our HDC from memory
+
+	if (Engine->bFullScreen)								// If we were in full screen
+	{
+		ChangeDisplaySettings(NULL, 0);					// If So Switch Back To The Desktop
+		ShowCursor(TRUE);								// Show Mouse Pointer
+	}
+
+	SAFE_DELETE(Engine);
+	SAFE_DELETE(Console);
+
+	UnregisterClass("Atlas", g_hInstance);			// Free the window class
+
+	PostQuitMessage(0);								// Post a QUIT message to the window
+}
+
+
+///////////////////////////////// WIN MAIN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+/////
+/////	This function handles registering and creating the window.
+/////
+///////////////////////////////// WIN MAIN \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hprev, PSTR cmdline, int ishow)
+{
+	// Memory leak detection
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	HWND hWnd;
+
+	char buffer[255] = "";
+	bool bMod = false;
+	if (strcmp(cmdline, "") != 0)
+	{
+		sscanf(cmdline, "+game %s", &buffer);
+		bMod = true;
+	}
+	else
+		sprintf(buffer, "DaVinci");
+
+	if (bMod)
+		sprintf(g_sGameName, "%s\\", buffer);
+
+	Console = new CConsole;
+	Engine = new EngineSpace::CEngine();
+	Engine->ConfigRead("Engine.config");
+
+	hWnd = CreateMyWindow(buffer, Engine->Screen.Width, Engine->Screen.Height, 0, Engine->bFullScreen, hInstance);
+
+	// If we never got a valid window handle, quit the program
+	if (hWnd == NULL)
+		return TRUE;
+
+	// INIT OpenGL
+	Init(hWnd);
+
+	ConfigRead(buffer);
+
+	ShowCursor(TRUE);
+
+	// Run our message loop and after it's done, return the result
+	return (int)MainLoop();
+}
+
 void Dispatch_MouseDownLeft()
 {
 	Mouse.Button1 = MouseSpace::Down;
-	Mouse.Button1Begin = timeGetTime();
+	Mouse.Button1Begin = GetTickCount();
 	GetClientMousePosition();					// Gets The Current Client Cursor Coordinates (Mouse Coordinates)
 	Mouse.mp3d = GetClientMousePosition3D();
 
@@ -261,7 +634,7 @@ void Dispatch_MouseDownLeft()
 void Dispatch_MouseDownMiddle()
 {
 	Mouse.Button3 = MouseSpace::Down;
-	Mouse.Button3Begin = timeGetTime();
+	Mouse.Button3Begin = GetTickCount();
 	GetClientMousePosition();
 
 	if(!Game.bPlayMode)
@@ -273,7 +646,7 @@ void Dispatch_MouseDownMiddle()
 void Dispatch_MouseDownRight()
 {
 	Mouse.Button2 = MouseSpace::Down;
-	Mouse.Button2Begin = timeGetTime();
+	Mouse.Button2Begin = GetTickCount();
 	GetClientMousePosition();
 	Mouse.mp3d = GetClientMousePosition3D();
 
@@ -360,7 +733,7 @@ void Dispatch_MouseUpLeft()
 {
 	char buffer[255] = "";
 	
-	if(timeGetTime() - Mouse.Button1Begin < CLICK_TIME)
+	if(GetTickCount() - Mouse.Button1Begin < CLICK_TIME)
 		Mouse.Button1 = MouseSpace::Click;
 	else
 		Mouse.Button1 = MouseSpace::None;
@@ -402,7 +775,7 @@ void Dispatch_MouseUpLeft()
 
 void Dispatch_MouseUpMiddle()
 {
-	if(timeGetTime() - Mouse.Button3Begin < CLICK_TIME)
+	if(GetTickCount() - Mouse.Button3Begin < CLICK_TIME)
 		Mouse.Button3 = MouseSpace::Click;
 	else
 		Mouse.Button3 = MouseSpace::None;
@@ -413,7 +786,7 @@ void Dispatch_MouseUpMiddle()
 
 void Dispatch_MouseUpRight()
 {
-	if(timeGetTime() - Mouse.Button2Begin < CLICK_TIME)
+	if(GetTickCount() - Mouse.Button2Begin < CLICK_TIME)
 		Mouse.Button2 = MouseSpace::Click;
 	else
 		Mouse.Button2 = MouseSpace::None;
@@ -484,51 +857,6 @@ void DrawMousePoint(float X, float Y, float Z)
 		glVertex3f(X - 3.0f, Y + 10.0f, Z + 3.0f);
 		glVertex3f(X, Y, Z); 
 	glEnd();
-}
-
-CGraphicObject* Entity_add(char* filename)
-{
-	CGraphicObject* result = NULL;
-
-	if(!filename)
-		return result;
-
-	char* sExtention = "";
-	sExtention = ExtractFileExt(filename);
-
-	int id = -1;
-	if(strcmpi(sExtention, "3ds") == 0)
-	{
-		id = g_Manager_3DSObject.Add(filename);
-		result = g_Manager_3DSObject.Mesh[id];
-	}
-	else if(strcmpi(sExtention, "md2") == 0)
-	{
-		id = g_Manager_Entity.Add(filename, filename);
-		result = &g_Manager_Entity.Object[id];
-	}
-	else if(strcmpi(sExtention, "particle") == 0)
-	{
-		id = g_Manager_StaticObject.Add(filename);
-		result = &g_Manager_StaticObject.Object[id];
-	}
-	else if(strcmpi(sExtention, "static") == 0)
-	{
-		id = g_Manager_ParticleSystem.Add(filename);
-		result = &g_Manager_ParticleSystem.Object[id];
-	}
-	else
-	{
-		Console->Output("ERROR: unsupported file format");
-		assert(0);
-	}
-
-	return result;
-}
-
-CSceneObject* GetObjectByID(int id)
-{
-	return Scene.GetObjectByID(id);
 }
 
 ///////////////////////////////// INIT \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
@@ -632,12 +960,12 @@ WPARAM MainLoop()
 				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
 					g_Manager_Chat.Add("Another client has disconnected.", "Server");
 
-					g_Manager_Player.Delete(g_Manager_Player.GetPlayerByAddress(packet->systemAddress));
+					g_Manager_Player->Delete(g_Manager_Player->GetPlayerByAddress(packet->systemAddress));
 					break;
 				case ID_REMOTE_CONNECTION_LOST:
 					g_Manager_Chat.Add("Another client has lost the connection.", "Server");
 
-					g_Manager_Player.Delete(g_Manager_Player.GetPlayerByAddress(packet->systemAddress));
+					g_Manager_Player->Delete(g_Manager_Player->GetPlayerByAddress(packet->systemAddress));
 					break;
 				case ID_REMOTE_NEW_INCOMING_CONNECTION:
 					g_Manager_Chat.Add("Another client has connected.", "Server");
@@ -663,21 +991,21 @@ WPARAM MainLoop()
 					g_Manager_Chat.Add("You have been disconnected.", "Server");
 
 					Game.mPlayer = NULL;
-					g_Manager_Player.Clear();
+					g_Manager_Player->Clear();
 
 					g_iLocalPlayer = 0;
-					g_Manager_Player.Add(Game.sPlayerName);
-					Game.mPlayer = &g_Manager_Player.Player[g_iLocalPlayer];
+					g_Manager_Player->Add(Game.sPlayerName);
+					Game.mPlayer = &g_Manager_Player->Player[g_iLocalPlayer];
 					break;
 				case ID_CONNECTION_LOST:
 					g_Manager_Chat.Add("Connection lost.", "Server");
 
 					Game.mPlayer = NULL;
-					g_Manager_Player.Clear();
+					g_Manager_Player->Clear();
 
 					g_iLocalPlayer = 0;
-					g_Manager_Player.Add(Game.sPlayerName);
-					Game.mPlayer = &g_Manager_Player.Player[g_iLocalPlayer];
+					g_Manager_Player->Add(Game.sPlayerName);
+					Game.mPlayer = &g_Manager_Player->Player[g_iLocalPlayer];
 					break;
 				default:
 					sprintf(buffer, "Message with identifier %i has arrived.\n", packet->data[0]);
@@ -755,32 +1083,6 @@ void Manage_Threads()
 			g_hThread[i] = 0;
 		}
 	}
-}
-
-int Material_Add(char* Filename)
-{
-	return g_Manager_Material.Add(Filename);
-}
-
-int Material_Apply(int index, bool bForceMaterialUse)
-{
-	return g_Manager_Material.Apply(index, bForceMaterialUse);
-}
-
-int Object3DS_Add(char* Filename)
-{
-	return g_Manager_3DSObject.Add(Filename);
-}
-
-int Object3DS_IndexOf(char* Filename)
-{
-	return g_Manager_3DSObject.IndexOf(Filename);
-}
-
-CPlayer* Player_Add(char* Filename)
-{
-	g_Manager_Player.Add(Filename);
-	return &g_Manager_Player.Player[g_Manager_Player.iActive];
 }
 
 void PrintToConsole(char* text)
@@ -863,7 +1165,7 @@ int ProcessCommand(char cmd[255])
 		    return 0;
 
 	    char buffer2[255] = "";
-	    sprintf(buffer2, "%i|%i|%s\0", CLIENT_CHANGE_NAME, g_iLocalPlayer, g_Manager_Player.Player[g_iLocalPlayer].Name);
+	    sprintf(buffer2, "%i|%i|%s\0", CLIENT_CHANGE_NAME, g_iLocalPlayer, g_Manager_Player->Player[g_iLocalPlayer].Name);
 
 	    Net_SendMessage(buffer2, true);
 		*/
@@ -963,11 +1265,11 @@ int ProcessCommand(char cmd[255])
 			return 0;
 
 	    Game.mPlayer = NULL;
-		g_Manager_Player.Clear();
+		g_Manager_Player->Clear();
 
 		g_iLocalPlayer = 0;
-		g_Manager_Player.Add(Game.sPlayerName);
-		Game.mPlayer = &g_Manager_Player.Player[g_iLocalPlayer];
+		g_Manager_Player->Add(Game.sPlayerName);
+		Game.mPlayer = &g_Manager_Player->Player[g_iLocalPlayer];
 
 	    if(peer != NULL)
 		    peer->CloseConnection(peer->GetSystemAddressFromIndex(0), true, 0);
@@ -984,12 +1286,18 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "ENGINE.ANTIALIAS") == 0)
     {
-	    sscanf(cmd, "ENGINE.ANTIALIAS %i", &Engine->iAntialias);
-		sscanf(cmd, "ENGINE.ANTIALIAS %i", &(int32_t)Engine->bPointAndLineAntialiasing);
+		int32_t bValue{ 0 };
+	    sscanf(cmd, "ENGINE.ANTIALIAS %i", &bValue);
+
+		Engine->iAntialias = bValue;
+		Engine->bPointAndLineAntialiasing = static_cast<bool>(bValue);
     }
     if(strcmpi(cmdstr, "ENGINE.CELLSHADING") == 0)
     {
-	    sscanf(cmd, "ENGINE.CELLSHADING %i", &(int32_t)Engine->bCellShading);
+		int32_t bValue{ 0 };
+	    sscanf(cmd, "ENGINE.CELLSHADING %i", &bValue);
+
+		Engine->bCellShading = bValue;
     }
     if(strcmpi(cmdstr, "ENGINE.CLIP") == 0)
     {
@@ -1024,7 +1332,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "ENGINE.LOD") == 0)
     {
-	    sscanf(cmd, "ENGINE.LOD %i", &Engine->iMaxLODLevel);
+	    sscanf(cmd, "ENGINE.LOD %i", &g_iMaxLODLevel);
     }
 	if(strcmpi(cmdstr, "ENGINE.MOTIONBLUR") == 0)
     {
@@ -1270,9 +1578,9 @@ int ProcessCommand(char cmd[255])
     {
 	    sscanf(cmd, "LOCALPLAYER %i", &g_iLocalPlayer);
 
-	    if(g_iLocalPlayer > g_Manager_Player.Count - 1)
+	    if(g_iLocalPlayer > g_Manager_Player->Count - 1)
 	    {
-		    g_iLocalPlayer = g_Manager_Player.Count - 1;
+		    g_iLocalPlayer = g_Manager_Player->Count - 1;
 	    }
     }
     if(strcmpi(cmdstr, "MAP.ALPHAMAP") == 0)
@@ -1736,7 +2044,7 @@ int ProcessCommand(char cmd[255])
 	}
     if(strcmpi(cmdstr, "PLAYER.ADD") == 0)
     {
-	    if(g_Manager_Player.Count >= g_Manager_Player.iMaxPlayers)
+	    if(g_Manager_Player->Count >= g_Manager_Player->iMaxPlayers)
 		    return -1;
 
 	    if(strcmpi(cmd, cmdstr) != 0)
@@ -1744,12 +2052,12 @@ int ProcessCommand(char cmd[255])
 		    sscanf(cmd, "PLAYER.ADD %s", &buffer);
 	    }
 
-		g_Manager_Player.Add(buffer);
+		g_Manager_Player->Add(buffer);
 
 		if(strlen(buffer) == 0)
 			sprintf(buffer, "Male");
 
-		g_Manager_Player.Player[g_Manager_Player.Count - 1].Spawn(buffer, true, 0.0f, 0.0f, 0.0f);
+		g_Manager_Player->Player[g_Manager_Player->Count - 1].Spawn(buffer, true, 0.0f, 0.0f, 0.0f);
     }
     if(strcmpi(cmdstr, "PLAYER.MODEL") == 0)
     {
@@ -1758,7 +2066,7 @@ int ProcessCommand(char cmd[255])
 
 	    sscanf(cmd, "PLAYER.MODEL %s", &Game.sPlayerModel);
 
-	    g_Manager_Player.Player[g_iLocalPlayer].ChangeModel(Game.sPlayerModel);
+	    g_Manager_Player->Player[g_iLocalPlayer].ChangeModel(Game.sPlayerModel);
 
 	    if(peer == NULL)
 		    return 0;
@@ -1770,36 +2078,36 @@ int ProcessCommand(char cmd[255])
     }
     if(strcmpi(cmdstr, "PLAYER.NAME") == 0)
     {
-	    sscanf(cmd, "PLAYER.NAME %s", g_Manager_Player.Player[g_iLocalPlayer].mName);
+	    sscanf(cmd, "PLAYER.NAME %s", g_Manager_Player->Player[g_iLocalPlayer].mName);
 
 	    if(peer == NULL)
 		    return 0;
 
 	    char buffer2[255] = "";
-	    sprintf(buffer2, "%i|%i|%s\0", CLIENT_CHANGE_NAME, g_iLocalPlayer, g_Manager_Player.Player[g_iLocalPlayer].mName);
+	    sprintf(buffer2, "%i|%i|%s\0", CLIENT_CHANGE_NAME, g_iLocalPlayer, g_Manager_Player->Player[g_iLocalPlayer].mName);
 
 	    Net_SendMessage(buffer2, true);
     }
 	if(strcmpi(cmdstr, "PLAYER.SETACTIVE") == 0)
     {
-	    sscanf(cmd, "PLAYER.SETACTIVE %i", &g_Manager_Player.iActive);
+	    sscanf(cmd, "PLAYER.SETACTIVE %i", &g_Manager_Player->iActive);
     }
 	if(strcmpi(cmdstr, "PLAYER.SETPOSITION") == 0)
     {
 		float wx, wz;
 		sscanf(cmd, "PLAYER.SETPOSITION %f %f", &wx, &wz);
 
-		g_Manager_Player.Player[g_Manager_Player.iActive].SetPosition(CVector3(wx, 0.0f, wz));
+		g_Manager_Player->Player[g_Manager_Player->iActive].SetPosition(CVector3(wx, 0.0f, wz));
     }
     if(strcmpi(cmdstr, "PLAYER.TEAM") == 0)
     {
-	    sscanf(cmd, "PLAYER.TEAM %i", &g_Manager_Player.Player[g_iLocalPlayer].iTeam);
+	    sscanf(cmd, "PLAYER.TEAM %i", &g_Manager_Player->Player[g_iLocalPlayer].iTeam);
 
 	    if(peer == NULL)
 		    return 0;
 
 	    char buffer2[255] = "";
-	    sprintf(buffer2, "%i|%i|%i", CLIENT_CHANGE_TEAM, g_iLocalPlayer, g_Manager_Player.Player[g_iLocalPlayer].iTeam);
+	    sprintf(buffer2, "%i|%i|%i", CLIENT_CHANGE_TEAM, g_iLocalPlayer, g_Manager_Player->Player[g_iLocalPlayer].iTeam);
 
 	    Net_SendMessage(buffer2, true);
     }
@@ -1862,7 +2170,7 @@ int ProcessCommand(char cmd[255])
 	    }
 	    sprintf(buffer, "%s\0", buffer);
 
-	    g_Manager_Chat.Add(buffer, g_Manager_Player.Player[g_iLocalPlayer].mName);
+	    g_Manager_Chat.Add(buffer, g_Manager_Player->Player[g_iLocalPlayer].mName);
 
 	    if(peer == NULL)
 		    return 0;
@@ -1883,13 +2191,13 @@ int ProcessCommand(char cmd[255])
 	    }
 	    sprintf(buffer, "%s\0", buffer);
 
-	    g_Manager_Chat.Add(buffer, g_Manager_Player.Player[g_iLocalPlayer].mName);
+	    g_Manager_Chat.Add(buffer, g_Manager_Player->Player[g_iLocalPlayer].mName);
 
 	    if(peer == NULL)
 		    return 0;
 
 	    char buffer2[255] = "";
-	    sprintf(buffer2, "%i|%i|%i|%s\0", CHAT_MESSAGE_TEAM, g_iLocalPlayer, g_Manager_Player.Player[g_iLocalPlayer].iTeam, buffer);
+	    sprintf(buffer2, "%i|%i|%i|%s\0", CHAT_MESSAGE_TEAM, g_iLocalPlayer, g_Manager_Player->Player[g_iLocalPlayer].iTeam, buffer);
 
 	    Net_SendMessage(buffer2, true);
     }
@@ -2018,7 +2326,7 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "TEXTURE.ANSITROPIC") == 0)
     {
-		sscanf(cmd, "TEXTURE.ANSITROPIC %f", &Engine->fAnsitropicFilter);
+		sscanf(cmd, "TEXTURE.ANSITROPIC %f", &g_fAnsitropicFilter);
 		g_Manager_Texture->Apply();
     }
 	if(strcmpi(cmdstr, "TEXTURE.APPLY") == 0)
@@ -2027,7 +2335,10 @@ int ProcessCommand(char cmd[255])
     }
 	if(strcmpi(cmdstr, "TEXTURE.COMPRESS") == 0)
 	{
-		sscanf(cmd, "TEXTURE.COMPRESS %i", &(int32_t)Engine->bCompressedTextures);
+		int bValue;
+		sscanf(cmd, "TEXTURE.COMPRESS %i", &bValue);
+
+		g_bCompressedTextures = bValue;
 	}
 	if(strcmpi(cmdstr, "TEXTURE.FILTER") == 0)
     {
@@ -2738,7 +3049,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 	    {
 	    // MessageID | InvolvedPlayer | ID
 	    sscanf(buffer, "%i|%i", &iMsgID, &iPlayer);
-	    sscanf(buffer, "%i|%i|%i", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mId);
+	    sscanf(buffer, "%i|%i|%i", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].mId);
 
 	    char playername[255] = "";
 	    sprintf(playername, "PLAYER.NAME %s", Game.sPlayerName);
@@ -2756,20 +3067,20 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		if(iPlayer < 0)
 			break;
 
-	    if(iPlayer > g_Manager_Player.Count - 1)
+	    if(iPlayer > g_Manager_Player->Count - 1)
 	    {
-		    g_Manager_Player.Add("Player");
-		    g_Manager_Player.Player[g_Manager_Player.Count - 1].Spawn("Rhino", 0.0f, 0.0f, 0.0f, 1.0f);
+		    g_Manager_Player->Add("Player");
+		    g_Manager_Player->Player[g_Manager_Player->Count - 1].Spawn("Rhino", 0.0f, 0.0f, 0.0f, 1.0f);
 	    }
 
-	    sscanf(buffer, "%i|%i|%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mId, &g_Manager_Player.Player[iPlayer].iKills, &g_Manager_Player.Player[iPlayer].iDeaths, g_Manager_Player.Player[iPlayer].mName);
+	    sscanf(buffer, "%i|%i|%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].mId, &g_Manager_Player->Player[iPlayer].iKills, &g_Manager_Player->Player[iPlayer].iDeaths, g_Manager_Player->Player[iPlayer].mName);
 	    g_Manager_Statistic.Manage();
 	    break;
     case CLIENT_LOCALPLAYER:
 	    {
 	    // MessageID | InvolvedPlayer [| NewPlayerIndex]
 	    Game.mPlayer = NULL;
-	    g_Manager_Player.Clear();
+	    g_Manager_Player->Clear();
 
 	    int newplayerid = -1;
 
@@ -2795,15 +3106,15 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		    char playername[255] = "Player";
 		    sprintf(buffer, "%s%i", playername, i);
 
-		    g_Manager_Player.Add(buffer);
-		    g_Manager_Player.Player[i].Spawn("Male", false, 0.0f, 0.0f, 0.0f);
+		    g_Manager_Player->Add(buffer);
+		    g_Manager_Player->Player[i].Spawn("Male", false, 0.0f, 0.0f, 0.0f);
 	    }
 
 		if(g_iLocalPlayer < 0)
 			break;
 
-		g_Manager_Player.Add(Game.sPlayerName);
-		Game.mPlayer = &g_Manager_Player.Player[g_iLocalPlayer];
+		g_Manager_Player->Add(Game.sPlayerName);
+		Game.mPlayer = &g_Manager_Player->Player[g_iLocalPlayer];
 
 	    if(newplayerid == -1)
 	    {
@@ -2819,7 +3130,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
     case CLIENT_POSITION_XYZ:
 	    // MessageID | InvolvedPlayer | PositionX | PositionY | PositionZ
 	    sscanf(buffer, "%i|%i", &iMsgID, &iPlayer);
-	    sscanf(buffer, "%i|%i|%f|%f|%f", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mPosition.x, &g_Manager_Player.Player[iPlayer].mPosition.y, &g_Manager_Player.Player[iPlayer].mPosition.z);
+	    sscanf(buffer, "%i|%i|%f|%f|%f", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].mPosition.x, &g_Manager_Player->Player[iPlayer].mPosition.y, &g_Manager_Player->Player[iPlayer].mPosition.z);
 	    break;
     case CLIENT_VIEW_XYZ:
 	    // MessageID | InvolvedPlayer | ViewX | ViewY | ViewZ
@@ -2829,7 +3140,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 			break;
 
 	    if(iPlayer != g_iLocalPlayer)
-		    sscanf(buffer, "%i|%i|%f|%f|%f", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].vView.x, &g_Manager_Player.Player[iPlayer].vView.y, &g_Manager_Player.Player[iPlayer].vView.z);
+		    sscanf(buffer, "%i|%i|%f|%f|%f", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].vView.x, &g_Manager_Player->Player[iPlayer].vView.y, &g_Manager_Player->Player[iPlayer].vView.z);
 	    break;
     case CLIENT_VIEWANGLE_XYZ:
 	    // MessageID | InvolvedPlayer | fAngleX | fAngleY | fAngleZ
@@ -2838,7 +3149,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		if(iPlayer < 0)
 			break;
 
-	    sscanf(buffer, "%i|%i|%f|%f|%f", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mRotation.x, &g_Manager_Player.Player[iPlayer].mRotation.y, &g_Manager_Player.Player[iPlayer].mRotation.z);
+	    sscanf(buffer, "%i|%i|%f|%f|%f", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].mRotation.x, &g_Manager_Player->Player[iPlayer].mRotation.y, &g_Manager_Player->Player[iPlayer].mRotation.z);
 	    break;
     case CLIENT_CHANGE_NAME:
 	    // MessageID | InvolvedPlayer | PlayerID | PlayerName
@@ -2847,11 +3158,11 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		if(iPlayer < 0)
 			break;
 
-	    sscanf(buffer, "%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].mId, g_Manager_Player.Player[iPlayer].mName);
+	    sscanf(buffer, "%i|%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].mId, g_Manager_Player->Player[iPlayer].mName);
 
-	    for(i = g_Manager_Player.Count - 1; i < iPlayer; i += 1)
+	    for(i = g_Manager_Player->Count - 1; i < iPlayer; i += 1)
 	    {
-		    sprintf(buffer, "PLAYER.ADD %s", g_Manager_Player.Player[iPlayer].mName);
+		    sprintf(buffer, "PLAYER.ADD %s", g_Manager_Player->Player[iPlayer].mName);
 		    ProcessCommand(buffer);
 	    }
 	    break;
@@ -2862,7 +3173,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		if(iPlayer < 0)
 			break;
 
-	    sscanf(buffer, "%i|%i|%i", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].iTeam);
+	    sscanf(buffer, "%i|%i|%i", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].iTeam);
 	    break;
     case CLIENT_CHANGE_MODEL:
 	    // MessageID | FromPlayer | NewModel
@@ -2871,9 +3182,9 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		if(iPlayer < 0)
 			break;
 
-	    sscanf(buffer, "%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player.Player[iPlayer].cModel);
+	    sscanf(buffer, "%i|%i|%s", &iMsgID, &iPlayer, &g_Manager_Player->Player[iPlayer].cModel);
 
-	    g_Manager_Player.Player[iPlayer].ChangeModel(g_Manager_Player.Player[iPlayer].cModel);
+	    g_Manager_Player->Player[iPlayer].ChangeModel(g_Manager_Player->Player[iPlayer].cModel);
 	    break;
 	case CLIENT_CHANGE_WEAPON:
 		// MessageID | FromPlayer | NewWeapon
@@ -2883,7 +3194,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 		if(iPlayer < 0)
 			break;
 
-		g_Manager_Player.Player[iPlayer].Weapon.iModel = g_Manager_3DSObject.Add(buffer);
+		g_Manager_Player->Player[iPlayer].Weapon.iModel = g_Manager_3DSObject.Add(buffer);
 		break;
     case CHAT_MESSAGE:
 	    {
@@ -2915,7 +3226,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 	    }
 
 	    if(strlen(msg) > 0)
-		    g_Manager_Chat.Add(msg, g_Manager_Player.Player[iPlayer].mName);
+		    g_Manager_Chat.Add(msg, g_Manager_Player->Player[iPlayer].mName);
 	    }
 	    break;
 	case CHAT_MESSAGE_TEAM:
@@ -2949,7 +3260,7 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 	    }
 
 	    if(strlen(msg) > 0 && iTeam == Game.mPlayer->iTeam)
-		    g_Manager_Chat.Add(msg, g_Manager_Player.Player[iPlayer].mName);
+		    g_Manager_Chat.Add(msg, g_Manager_Player->Player[iPlayer].mName);
 	    }
 		break;
     case REQUEST_CHANGE_MAP:
@@ -2983,24 +3294,24 @@ void ProcessNetMessage(RPCParameters *rpcParameters)
 	    // MessageID | FromPlayer
 	    sscanf(buffer, "%i|%i", &iMsgID, &iPlayer);
     	
-	    g_Manager_Player.Player[iPlayer].Shoot(true);
+	    g_Manager_Player->Player[iPlayer].Shoot(true);
 	    break;
     case CLIENT_SHOOT_BEGIN:
 	    // MessageID | FromPlayer
 	    sscanf(buffer, "%i|%i", &iMsgID, &iPlayer);
-	    g_Manager_Player.Player[iPlayer].bShoot = true;
+	    g_Manager_Player->Player[iPlayer].bShoot = true;
 	    break;
     case CLIENT_SHOOT_END:
 	    // MessageID | FromPlayer
 	    sscanf(buffer, "%i|%i", &iMsgID, &iPlayer);
-	    g_Manager_Player.Player[iPlayer].bShoot = false;
+	    g_Manager_Player->Player[iPlayer].bShoot = false;
 	    break;
     case CLIENT_GET_HIT:
 	    // MessageID | ToPlayer | FromPlayer
 	    int iFromPlayer;
 	    sscanf(buffer, "%i|%i|%i", &iMsgID, &iPlayer, &iFromPlayer);
 
-	    if(!g_Manager_Player.Hit(iPlayer, iFromPlayer, true))
+	    if(!g_Manager_Player->Hit(iPlayer, iFromPlayer, true))
 	    {
 		    sprintf(buffer, "%i|%i", CLIENT_SHOTBY, iPlayer);
 		    Net_SendMessage(buffer, true);
@@ -3049,26 +3360,6 @@ void SetVSyncState(bool enable)
 		glSwapIntervalEXT(1);
 	else
 		glSwapIntervalEXT(0);
-}
-
-GLuint Texture_Add(char* Filename)
-{
-	return g_Manager_Texture->CreateTexture(Filename);
-}
-
-GLuint Texture_IndexOf(char* Filename)
-{
-	return g_Manager_Texture->IndexOf(Filename);
-}
-
-void Texture_SetActive(char* Filename)
-{
-	g_Manager_Texture->SetActiveTexture(Filename);
-}
-
-void Texture_SetActiveID(int id)
-{
-	g_Manager_Texture->SetActiveTextureID(id);
 }
 
 ///////////////////////////////// WIN PROC \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*

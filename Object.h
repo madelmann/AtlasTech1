@@ -1,10 +1,14 @@
-#ifndef _OBJECT_H
-#define _OBJECT_H
 
+#pragma once
 
-#include "Shader.h"
+// Library includes
+
+// Project includes
+#include "GLWrapper.h"
 #include "Tools.h"
-#include "Main.h"
+
+
+class CShader;
 
 
 namespace Physic
@@ -35,31 +39,30 @@ struct AABBVolume
 {
 	AABBVolume() { }
 	AABBVolume(float width, float height, float depth)
-	{
-		X1 = -width / 2;
-		X2 =  width / 2;
-		Y1 = -height / 2;
-		Y2 =  height / 2;
-		Z1 = -depth / 2;
-		Z2 =  depth / 2;
-		volumeType = BoundingVolume::Box;
-	}
+	: X1(- width / 2)
+	, X2(width / 2)
+	, Y1(-height / 2)
+	, Y2( height / 2 )
+	, Z1(- depth / 2)
+	, Z2( depth / 2)
+	, volumeType( BoundingVolume::Box )
+	{ }
 
 	CVector3 getCenter()
 	{
 		return CVector3(CX, CY, CZ);
 	}
 
-	float X1;
-	float X2;
-	float Y1;
-	float Y2;
-	float Z1;
-	float Z2;
-	float CX;
-	float CY;
-	float CZ;
-	float Radius;
+	float X1{ 0.f };
+	float X2{ 0.f };
+	float Y1{ 0.f };
+	float Y2{ 0.f };
+	float Z1{ 0.f };
+	float Z2{ 0.f };
+	float CX{ 0.f };
+	float CY{ 0.f };
+	float CZ{ 0.f };
+	float Radius{ 0.f };
 	BoundingVolume::BoundingVolumeType_t volumeType;
 };
 
@@ -88,8 +91,9 @@ public:
 	CObject()
 	: mId(-1),
 	  mName("")
-	{
-	}
+	{ }
+
+	virtual ~CObject() { }
 
 	int getId()
 	{
@@ -120,6 +124,8 @@ class CPhysicObject : public CObject
 public:
 	CPhysicObject();
 	CPhysicObject(float mass);
+	virtual ~CPhysicObject() { }
+
 	void ApplyForce(Physic::Force_e force, CVector3 vforce);
 	void DoForce(Physic::Force_e force);
 	void DoPhysic(bool dophysic);
@@ -205,9 +211,5 @@ public:
 
 protected:
 	CShader*			mShader;
-
-private:
-	//CShader*			mShader;
 };
 
-#endif

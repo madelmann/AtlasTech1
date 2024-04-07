@@ -1,12 +1,12 @@
-#ifndef _LIGHT_H
-#define _LIGHT_H
 
+#pragma once
 
-#include "Tools.h"
-
+// Library includes
 #include <stdlib.h>
-#include <windows.h>
-#include <gl\gl.h>										// Header File For The OpenGL32 Library
+
+// Project includes
+#include "GLWrapper.h"
+#include "Tools.h"
 
 
 class CLight
@@ -96,5 +96,3 @@ private:
 	CVector3	mPosition;
 	CRGBA		mSpecular;
 };
-
-#endif

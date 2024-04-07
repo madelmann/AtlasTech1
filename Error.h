@@ -1,8 +1,10 @@
-#ifndef ERROR_HH
-#define ERROR_HH
 
+#pragma once
 
-#include <GL/gl.h>
+// Library includes
+
+// Project includes
+#include "GLWrapper.h"
 
 
 #define CHECKGLSILENT GLError::Silent(__FILE__,__LINE__);
@@ -16,5 +18,3 @@ namespace GLError
 
 	extern GLenum lasterror;
 }
-
-#endif

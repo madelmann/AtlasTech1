@@ -1,4 +1,9 @@
+
+// Library includes
+
+// Project includes
 #include "Main.h"
+#include "Statistics.h"
 
 
 CStatistic::CStatistic()
@@ -39,10 +44,10 @@ CStatisticsManager::~CStatisticsManager()
 
 void CStatisticsManager::Manage()
 {
-	if(g_Manager_Player.Count <= 0)
+	if(g_Manager_Player->Count <= 0)
 		return;
 
-	Count = g_Manager_Player.Count;
+	Count = g_Manager_Player->Count;
 
 	SortByColumn(iSortColumn);
 }
@@ -53,10 +58,10 @@ void CStatisticsManager::SortByColumn(int Column)
 
 	for(int i = 0; i < Count; i += 1)
 	{
-		sprintf(Statistic[i].cName, "%s", g_Manager_Player.Player[i].getName());
-		Statistic[i].iDeaths = g_Manager_Player.Player[i].iDeaths;
-		Statistic[i].iID = g_Manager_Player.Player[i].getId();
-		Statistic[i].iKills = g_Manager_Player.Player[i].iKills;
+		sprintf(Statistic[i].cName, "%s", g_Manager_Player->Player[i].getName());
+		Statistic[i].iDeaths = g_Manager_Player->Player[i].iDeaths;
+		Statistic[i].iID = g_Manager_Player->Player[i].getId();
+		Statistic[i].iKills = g_Manager_Player->Player[i].iKills;
 		Statistic[i].iLatency = i;
 	}
 

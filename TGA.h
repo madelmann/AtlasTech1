@@ -2,9 +2,13 @@
 #ifndef _TGA_H
 #define _TGA_H
 
+// Library includes
 #include <iostream>
 #include <fstream>
 #include <memory.h>
+
+// Project includes
+
 
 #define IMG_OK              0x1
 #define IMG_ERR_NO_FILE     0x2

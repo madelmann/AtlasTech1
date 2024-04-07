@@ -1,8 +1,10 @@
-#ifndef _FLORA_H
-#define _FLORA_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Tools.h"
 
 
 #define FLORA_MAX	1000
@@ -38,5 +40,3 @@ public:
 		int		iMax;
 		CFlora	Flora[FLORA_MAX];
 };
-
-#endif

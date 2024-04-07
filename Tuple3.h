@@ -6,11 +6,16 @@
 #ifndef TUPLE3_H
 #define TUPLE3_H
 
+
+ // Library includes
+
 #include <cmath>
 #include <float.h>
 #include <iostream>
  
+ // Project includes
 #include "Tuple2.h"
+
 using namespace std;
 
 template <class T>

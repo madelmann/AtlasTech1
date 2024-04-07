@@ -1,5 +1,11 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "Bullet.h"
+#include "Globals.h"
 #include "QuadTree.h"
+#include "Player.h"
 
 
 ///////////////////////////////// RETURN CURRENT TIME \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
@@ -58,28 +64,23 @@ CBullet::CBullet()
 	vDirection = CVector3(0.0f, 0.0f, 0.0f);
 }
 
-CBullet::~CBullet()
-{
-}
-
 int CBullet::Collision()
 {
 	int result = -2;
 
-	int box = Scene.CollisionWithBox((CGraphicObject*)this);
-	if(box)
-		return -1;
+	//int box = Scene.CollisionWithBox((CGraphicObject*)this);
+	//if(box)
 	//	return g_Manager_Script.Execute(Scene.SceneObjects[box].go->sTriggerScript, true, true);
 
 	CVector3 p = mPosition;
 	CVector3 s = Normalize(vDirection);
 
-	for(int i = 0; i < g_Manager_Player.Count; i += 1)
+	for(int i = 0; i < g_Manager_Player->Count; i += 1)
 	{
 		if(i != iFrom)
 		{
-			CVector3 m = g_Manager_Player.Player[i].mPosition + CVector3(g_Manager_Player.Player[i].BoundingVolume.CX, g_Manager_Player.Player[i].BoundingVolume.CY, g_Manager_Player.Player[i].BoundingVolume.CZ);
-			float r = g_Manager_Player.Player[i].fRadius;
+			CVector3 m = g_Manager_Player->Player[i].mPosition + CVector3(g_Manager_Player->Player[i].BoundingVolume.CX, g_Manager_Player->Player[i].BoundingVolume.CY, g_Manager_Player->Player[i].BoundingVolume.CZ);
+			float r = g_Manager_Player->Player[i].fRadius;
 			
 			float b = (2 / (s.x * s.x + s.y * s.y + s.z * s.z)) * (s.x * (p.x - m.x) + s.y * (p.y - m.y) + s.z * (p.z - m.z));
 			float c = (p.x * p.x + p.y * p.y + p.z * p.z + m.x * m.x + m.y * m.y + m.z * m.z - 2 * (p.x * m.x + p.y * m.y + p.z * m.z) - r * r) / (s.x * s.x + s.y * s.y + s.z * s.z);
@@ -224,7 +225,7 @@ void CBulletManager::Manage()
 			int iCollision = Bullet[i].Collision();
 			if(iCollision >= 0)
 			{
-				g_Manager_Player.Hit(iCollision, Bullet[i].iFrom, false);
+				g_Manager_Player->Hit(iCollision, Bullet[i].iFrom, false);
 				Delete(i);
 			}
 			if(iCollision == -1)

@@ -1,12 +1,14 @@
 
-#include "UIObject.h"
+// Library includes
 
-#include <gl\gl.h>
+// Project includes
+#include "../GLWrapper.h"
+#include "UIObject.h"
 
 
 extern CGLFont Font;
 
-extern void glPrintText(float x, float y, string* text, ...);
+extern void glPrintText(float x, float y, std::string* text, ...);
 extern GLuint Texture_Add(char* Filename);
 extern void Texture_SetActive(char* Filename);
 extern void Texture_SetActiveID(int id);

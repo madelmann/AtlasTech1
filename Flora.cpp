@@ -1,4 +1,13 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "Flora.h"
+#include "Globals.h"
+#include "GLWrapper.h"
+#include "QuadTree.h"
+#include "Texture.h"
+#include "Tools.h"
 
 
 CFlora::CFlora()
@@ -43,7 +52,7 @@ void CFlora::Render()
 
 void CFlora::RenderWithoutDisplayList()
 {
-	Texture_SetActiveID(iTexture);
+	g_Manager_Texture->SetActiveTextureID(iTexture);
 
 	glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f);

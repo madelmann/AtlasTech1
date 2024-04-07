@@ -1,3 +1,7 @@
+
+// Library includes
+
+// Project includes
 #include "Main.h"
 
 
@@ -106,7 +110,7 @@ bool Editor::PreLoadData()
 	g_Manager_Entity.Clear();
 	g_Manager_Material.Clear();
 	g_Manager_ParticleSystem.Clear();
-	g_Manager_Player.Clear();
+	g_Manager_Player->Clear();
 	g_Manager_Region.Clear();
 	g_Manager_Sound.Clear();
 	g_Manager_StaticObject.Clear();

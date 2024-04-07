@@ -1,6 +1,13 @@
 #ifndef _MD2_H
 #define _MD2_H
 
+// Library includes
+#include <stdio.h>
+#include <vector>
+
+// Project includes
+
+
 // These are the needed defines for the max values when loading .MD2 files
 #define MD2_MAX_TRIANGLES		4096
 #define MD2_MAX_VERTICES		2048
@@ -39,8 +46,8 @@ struct tMd2Header
 // This is used to store the vertices that are read in for the current frame
 struct tMd2AliasTriangle
 {
-   byte vertex[3];
-   byte lightNormalIndex;
+   unsigned char vertex[3];
+   unsigned char lightNormalIndex;
 };
 
 // This stores the normals and vertices for the frames
@@ -110,7 +117,7 @@ struct tMaterialInfo
 {
 	char  strName[255];			// The texture name
 	char  strFile[255];			// The texture file name (If this is set it's a texture map)
-	BYTE  color[3];				// The color of the object (R, G, B)
+	unsigned char  color[3];				// The color of the object (R, G, B)
 	int   texureId;				// the texture ID
 	float uTile;				// u tiling of texture  
 	float vTile;				// v tiling of texture	
@@ -136,31 +143,6 @@ struct t3DObject
 	tFace *pFaces;				// The faces information of the object
 };
 
-//class t3DObject
-//{
-//public:
-//	t3DObject() { }
-//	~t3DObject()
-//	{
-//		delete [] pVerts;
-//		delete [] pNormals;
-//		delete [] pTexVerts;
-//		delete [] pFaces;
-//	}
-//
-//	int  numOfVerts;			// The number of verts in the model
-//	int  numOfFaces;			// The number of faces in the model
-//	int  numTexVertex;			// The number of texture coordinates
-//	int  materialID;			// The texture ID to use, which is the index into our texture array
-//	bool bHasTexture;			// This is TRUE if there is a texture map for this object
-//	char strName[255];			// The name of the object
-//	CModelVector3  *pVerts;		// The object's vertices
-//	CModelVector3  *pNormals;	// The object's normals
-//	CVector2  *pTexVerts;		// The texture's UV coordinates
-//	tFace *pFaces;				// The faces information of the object
-//};
-
-
 // This holds our information for each animation of the Quake model.
 // A STL vector list of this structure is created in our t3DModel structure below.
 struct tAnimationInfo
@@ -180,9 +162,9 @@ struct t3DModel
 	int numOfAnimations;				// The number of animations in this model (NEW)
 	int currentAnim;					// The current index into pAnimations list (NEW)
 	int currentFrame;					// The current frame of the current animation (NEW)
-	vector<tAnimationInfo> pAnimations; // The list of animations (NEW)
-	vector<tMaterialInfo> pMaterials;	// The list of material information (Textures and colors)
-	vector<t3DObject> pObject;			// The object list for our model
+	std::vector<tAnimationInfo> pAnimations; // The list of animations (NEW)
+	std::vector<tMaterialInfo> pMaterials;	// The list of material information (Textures and colors)
+	std::vector<t3DObject> pObject;			// The object list for our model
 };
 
 

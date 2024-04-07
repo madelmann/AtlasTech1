@@ -1,11 +1,16 @@
-#ifndef _BOTMANAGER_H
-#define _BOTMANAGER_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+#include <vector>
+
+// Project includes
+#include "Player.h"
+#include "Tools.h"
 
 
 #define MAX_BOTS		30
+#define MAX_WAYPOINTS	8
 #define MODE_AI_NONE	0
 #define MODE_AI_PATROL	1
 #define MODE_AI_FOLLOW	2
@@ -41,7 +46,7 @@ public:
 	CPlayer*	Player;
 	CVector3	vViewField;
 	CVector3	vWayPoint[MAX_WAYPOINTS];
-	vector<int>	lHearingList;
+	std::vector<int>	lHearingList;
 };
 
 class CBotManager
@@ -59,5 +64,3 @@ public:
 	CBot	Bot[MAX_BOTS];
 };
 
-
-#endif

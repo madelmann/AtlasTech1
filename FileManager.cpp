@@ -1,12 +1,14 @@
-#include "Main.h"
+
+// Library includes
 #include <io.h>
 #include <vector>
+
+// Project includes
 #include "FileManager.h"
 
 
 int CFileManager::Searchfiles(char *path, char *ext)
 {
-
 	filelist.clear();
 
 	char buffer[100];

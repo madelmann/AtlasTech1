@@ -1,8 +1,9 @@
-#ifndef _ADVENTURE_H
-#define _ADVENTURE_H
 
+#pragma once
 
-//#include "Main.h"
+// Library includes
+
+// Project includes
 
 
 class CAdventure
@@ -18,5 +19,3 @@ public:
 	char sTitle[255];
 	char sWorldMap[255];
 };
-
-#endif

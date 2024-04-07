@@ -369,18 +369,18 @@ bool CMap::Load(char Filename[255])
 
 	RenderStatusMessage("Inserting Player(s)...");
 
-	g_iLocalPlayer = g_Manager_Player.Add(Game.sPlayerName);
-	g_Manager_Player.Player[g_iLocalPlayer].Weapon.iModel = -1;
-	g_Manager_Player.Player[g_iLocalPlayer].Spawn(
+	g_iLocalPlayer = g_Manager_Player->Add(Game.sPlayerName);
+	g_Manager_Player->Player[g_iLocalPlayer].Weapon.iModel = -1;
+	g_Manager_Player->Player[g_iLocalPlayer].Spawn(
 													Game.sPlayerModel,
 													false,
 													Map.vSinglePlayerStartPoint.x,
 													Map.vSinglePlayerStartPoint.y,
 													Map.vSinglePlayerStartPoint.z
 												);
-	g_Manager_Player.Player[g_iLocalPlayer].SetView(CVector3(Map.vSinglePlayerStartAngle.x, Map.vSinglePlayerStartAngle.y, Map.vSinglePlayerStartAngle.z));
-	g_Manager_Player.Player[g_iLocalPlayer].iTeam = 0;
-	Game.mPlayer = &g_Manager_Player.Player[g_iLocalPlayer];
+	g_Manager_Player->Player[g_iLocalPlayer].SetView(CVector3(Map.vSinglePlayerStartAngle.x, Map.vSinglePlayerStartAngle.y, Map.vSinglePlayerStartAngle.z));
+	g_Manager_Player->Player[g_iLocalPlayer].iTeam = 0;
+	Game.mPlayer = &g_Manager_Player->Player[g_iLocalPlayer];
 
 	g_Camera.PositionCamera(
 							Map.vSinglePlayerStartPoint.x,
@@ -787,7 +787,7 @@ void CMap::UnLoad()
 	g_Manager_Entity.Clear();
 	g_Manager_Material.Clear();
 	g_Manager_ParticleSystem.Clear();
-	g_Manager_Player.Clear();
+	g_Manager_Player->Clear();
 	g_Manager_Region.Clear();
 	g_Manager_Sound.Clear();
 	g_Manager_StaticObject.Clear();

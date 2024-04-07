@@ -1,8 +1,12 @@
-#ifndef _QUADTREE_H
-#define _QUADTREE_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Normals.h"
+#include "Object.h"
+
 
 class CVertex;
 
@@ -16,9 +20,6 @@ class CVertex;
 class Node
 {
 public:
-	Node() { }
-	~Node() { }
-
 	AABBVolume		BoundingVolume;
 	bool			bOcclusionRender;
 	int				iAffactedByLight;
@@ -65,6 +66,3 @@ private:
 	int			mVertexCount;
 };
 
-
-
-#endif

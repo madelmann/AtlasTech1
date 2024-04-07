@@ -1,11 +1,11 @@
-#ifndef _CONSOLE_H
-#define _CONSOLE_H
+
+#pragma once
 
 
+// Library includes
+
+// Project includes
 #include "Singleton.h"
-
-#include "Main.h"
-#include "Engine.h"
 
 
 #define MAX_LINES 31
@@ -24,7 +24,7 @@ public:
 	void Clear();
 	int getOutputMode();
 	bool IsVisible() const;
-	void KeyPressed(WPARAM Key);
+	void KeyPressed(unsigned int Key);
 	bool Logging_Start();
 	void Logging_Stop();
 	void Output(char *text, ...);
@@ -50,5 +50,3 @@ private:
 	int		iOutputMode;
 	int		iVisibleLines;
 };
-
-#endif

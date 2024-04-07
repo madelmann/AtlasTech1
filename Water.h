@@ -1,8 +1,10 @@
-#ifndef _WATERNEW_H
-#define _WATERNEW_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Object.h"
 
 
 class CWater : public CGraphicObject
@@ -29,4 +31,3 @@ public:
 	void RenderCaustics(float waterHeight, float causticScale);
 };
 
-#endif

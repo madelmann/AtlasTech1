@@ -1,12 +1,15 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "EngineUtils.h"
+#include "Object.h"
 #include "Scene.h"
 
-using namespace std;
 
-
-bool preventDuplicates(vector<CSceneID> &vec, int child)
+bool preventDuplicates(std::vector<CSceneID> &vec, int child)
 {
-	for(vector<CSceneID>::iterator i = vec.begin(); i != vec.end(); i++)
+	for(std::vector<CSceneID>::iterator i = vec.begin(); i != vec.end(); i++)
 	{
 		if(i->getId() == child)
 		{
@@ -55,7 +58,7 @@ CSceneObject::CSceneObject(CGraphicObject* obj)
 
 CSceneObject::~CSceneObject()
 {
-	for(list<CMotion*>::iterator i = Motion.begin(); i != Motion.end(); i++)
+	for(std::list<CMotion*>::iterator i = Motion.begin(); i != Motion.end(); i++)
 	{
 		delete (*i);
 	}
@@ -165,7 +168,7 @@ void CSceneObject::Move(CVector3 pos)
 	if(Editor->bAllowMoveZ)
 		go->mPosition.z += pos.z;
 
-	for(vector<CSceneID>::iterator i = Nodes.begin(); i != Nodes.end(); i++)
+	for(std::vector<CSceneID>::iterator i = Nodes.begin(); i != Nodes.end(); i++)
 	{
 		GetObjectByID(i->getId())->Move(pos);
 	}

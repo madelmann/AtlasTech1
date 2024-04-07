@@ -1,8 +1,13 @@
 
+// Library includes
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <fstream>
+
+// Project includes
 #include "3dsloader.h"
 
-
-#include "Main.h"
 
 //>------ Primary Chunk, at the beginning of each file
 #define PRIMARY       0x4D4D
@@ -46,6 +51,13 @@
 #define RGBF   0x0010
 #define RGB24  0x0011
 
+
+std::ifstream::pos_type filesize(const char* filename)
+{
+	std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
+	return in.tellg();
+}
+
 /**********************************************************
  *
  * FUNCTION Load3DS (obj_type_ptr, char *)
@@ -61,7 +73,7 @@ char Load3DS(obj_type *p_object, char *p_filename)
 {
 	int i; //Index variable
 	
-	FILE *l_file; //File pointer
+	FILE* file; //File pointer
 	
 	unsigned short l_chunk_id; //Chunk identifier
 	unsigned int l_chunk_lenght; //Chunk lenght
@@ -71,16 +83,19 @@ char Load3DS(obj_type *p_object, char *p_filename)
 
 	unsigned short l_face_flags; //Flag that stores some face information
 
-	if( (l_file = fopen(p_filename, "rb") ) == NULL)
+	if( (file = fopen(p_filename, "rb") ) == NULL)
 		return 0; //Open the file
 
-	while ( ftell(l_file) < filelength(fileno(l_file)) ) //Loop to scan the whole file 
+	int32_t fileLength = fseek(file, 0, SEEK_END);
+	rewind(file);
+
+	while ( ftell(file) < fileLength ) //Loop to scan the whole file 
 	{
 		//getche(); //Insert this command for debug (to wait for keypress for each chuck reading)
 
-		fread (&l_chunk_id, 2, 1, l_file); //Read the chunk header
+		fread (&l_chunk_id, 2, 1, file); //Read the chunk header
 		//printf("ChunkID: %x\n",l_chunk_id); 
-		fread (&l_chunk_lenght, 4, 1, l_file); //Read the lenght of the chunk
+		fread (&l_chunk_lenght, 4, 1, file); //Read the lenght of the chunk
 		//printf("ChunkLenght: %x\n",l_chunk_lenght);
 
 		switch (l_chunk_id)
@@ -110,7 +125,7 @@ char Load3DS(obj_type *p_object, char *p_filename)
 					i = 0;
 					do
 					{
-						fread (&l_char, 1, 1, l_file);
+						fread (&l_char, 1, 1, file);
 						p_object->name[i] = l_char;
 						i++;
 					} while (l_char != '\0' && i < 20);
@@ -132,17 +147,17 @@ char Load3DS(obj_type *p_object, char *p_filename)
 			//             + sub chunks
 			//-------------------------------------------
 			case TRIVERT: 
-					fread(&l_qty, sizeof (unsigned short), 1, l_file);
+					fread(&l_qty, sizeof (unsigned short), 1, file);
 					p_object->vertices_qty = l_qty;
 					//printf("Number of vertices: %d\n", l_qty);
 	                
 					for(i = 0; i < l_qty; i += 1)
 					{
-						fread (&p_object->vertex[i].x, sizeof(float), 1, l_file);
+						fread (&p_object->vertex[i].x, sizeof(float), 1, file);
  						//printf("Vertices list x: %f\n", p_object->vertex[i].x);
-						fread (&p_object->vertex[i].z, sizeof(float), 1, l_file);
+						fread (&p_object->vertex[i].z, sizeof(float), 1, file);
  						//printf("Vertices list y: %f\n", p_object->vertex[i].z);
-						fread (&p_object->vertex[i].y, sizeof(float), 1, l_file);
+						fread (&p_object->vertex[i].y, sizeof(float), 1, file);
  						//printf("Vertices list z: %f\n", p_object->vertex[i].y);
 					}
 				break;
@@ -155,18 +170,18 @@ char Load3DS(obj_type *p_object, char *p_filename)
 			//             + sub chunks
 			//-------------------------------------------
 			case TRIFACE:
-					fread(&l_qty, sizeof (unsigned short), 1, l_file);
+					fread(&l_qty, sizeof (unsigned short), 1, file);
 					p_object->polygons_qty = l_qty;
 					//printf("Number of polygons: %d\n",l_qty); 
 	                
 					for ( i = 0; i < l_qty; i += 1 ) {
-						fread (&p_object->polygon[i].a, sizeof (unsigned short), 1, l_file);
+						fread (&p_object->polygon[i].a, sizeof (unsigned short), 1, file);
 						//printf("Polygon point a: %d\n", p_object->polygon[i].a);
-						fread (&p_object->polygon[i].b, sizeof (unsigned short), 1, l_file);
+						fread (&p_object->polygon[i].b, sizeof (unsigned short), 1, file);
 						//printf("Polygon point b: %d\n", p_object->polygon[i].b);
-						fread (&p_object->polygon[i].c, sizeof (unsigned short), 1, l_file);
+						fread (&p_object->polygon[i].c, sizeof (unsigned short), 1, file);
 						//printf("Polygon point c: %d\n", p_object->polygon[i].c);
-						fread (&l_face_flags, sizeof (unsigned short), 1, l_file);
+						fread (&l_face_flags, sizeof (unsigned short), 1, file);
 						//printf("Face flags: %x\n", l_face_flags);
 					}
                 break;
@@ -179,12 +194,12 @@ char Load3DS(obj_type *p_object, char *p_filename)
 			//             + sub chunks
 			//-------------------------------------------
 			case TRIUV:
-					fread(&l_qty, sizeof (unsigned short), 1, l_file);
+					fread(&l_qty, sizeof (unsigned short), 1, file);
 					for(i = 0; i < l_qty; i += 1)
 					{
-						fread (&p_object->mapcoord[i].u, sizeof (float), 1, l_file);
+						fread (&p_object->mapcoord[i].u, sizeof (float), 1, file);
 						//printf("Mapping list u: %f\n", p_object->mapcoord[i].u);
-						fread (&p_object->mapcoord[i].v, sizeof (float), 1, l_file);
+						fread (&p_object->mapcoord[i].v, sizeof (float), 1, file);
 						//printf("Mapping list v: %f\n", p_object->mapcoord[i].v);
 					}
                 break;
@@ -195,10 +210,10 @@ char Load3DS(obj_type *p_object, char *p_filename)
 			//to the same level next chunk
 			//-------------------------------------------
 			default:
-				 fseek(l_file, l_chunk_lenght - 6, SEEK_CUR);
+				 fseek(file, l_chunk_lenght - 6, SEEK_CUR);
         } 
 	}
 
-	fclose(l_file);	// Closes the file stream
+	fclose(file);	// Closes the file stream
 	return 1;		// Returns ok
 }

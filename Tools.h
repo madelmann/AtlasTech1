@@ -1,13 +1,15 @@
-#ifndef _TOOLS_H_
-#define _TOOLS_H_
 
+#pragma once
 
+// Library includes
 #include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <string>
-#include <windows.h>
 #include <xutility>
+
+// Project includes
+#include "Tuple2.h"
 
 
 //#define PI 3.14159265f
@@ -38,6 +40,9 @@ typedef				int			sint;			// at least 32bits (depend of processor)
 typedef	unsigned	int			uint;			// at least 32bits (depend of processor)
 
 
+extern double round(double r);
+
+
 class CScreen
 {
 public:
@@ -47,7 +52,7 @@ public:
 
 	int Depth;
 	int Height;
-	POINT Middle;
+	Tuple2<int32_t> Middle;
 	int Width;
 };
 
@@ -408,5 +413,3 @@ char *RemoveFileExt(char Filename[255]);
 bool StringCompare(std::string s1, std::string s2);
 bool StringCompareI(const std::string & s1, const std::string& s2);
 
-
-#endif

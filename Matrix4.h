@@ -6,6 +6,9 @@
 #define MATRIX4_H
 
 #include <iostream>
+#include "Tuple3.h"
+#include "Tuple4.h"
+
 using namespace std;
 
 template <class T>

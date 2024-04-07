@@ -1,8 +1,9 @@
-#ifndef _EDITOR_H
-#define _EDITOR_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
 #include "Texture.h"
 
 namespace EditorSpace {
@@ -58,5 +59,3 @@ private:
 };
 
 }
-
-#endif

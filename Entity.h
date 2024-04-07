@@ -1,9 +1,11 @@
-#ifndef _ENTITY_H
-#define _ENTITY_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
 #include "Md2.h"								// Include the MD2 header file.
+#include "Object.h"
 
 
 #define MAX_MD2OBJECTS 1000
@@ -34,6 +36,7 @@ class CEntityManager
 {
 public:
 	CEntityManager();
+
 	int Add(char Filename[255], char Texname[255]);
 	void Clear();
 	int IndexOf(char* entityname);
@@ -44,5 +47,3 @@ public:
 	int		iActive;
 	CEntity	Object[MAX_MD2OBJECTS];
 };
-
-#endif

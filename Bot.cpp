@@ -1,4 +1,13 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "Bot.h"
+#include "Editor.h"
+#include "Game.h"
+#include "Globals.h"
+#include "Normals.h"
+#include "Tools.h"
 
 
 CBot::CBot()
@@ -13,10 +22,10 @@ CBot::CBot()
 
 void CBot::FollowPlayer()
 {
-	if(g_Manager_Player.Player[g_iLocalPlayer].iTeam != Player->iTeam)
+	if(g_Manager_Player->Player[g_iLocalPlayer].iTeam != Player->iTeam)
 		return;
 
-	CVector3 vtmppos = g_Manager_Player.Player[g_iLocalPlayer].GetPosition();
+	CVector3 vtmppos = g_Manager_Player->Player[g_iLocalPlayer].GetPosition();
 
 	Player->SetView(vtmppos);
 	Normalize(Player->vView);

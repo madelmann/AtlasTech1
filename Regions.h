@@ -1,8 +1,10 @@
-#ifndef _REGIONS_H
-#define _REGIONS_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Tools.h"
 
 #define MAX_REGIONS 32
 
@@ -69,5 +71,3 @@ public:
 	int		iActive;
 	CRegion	Region[MAX_REGIONS];
 };
-
-#endif

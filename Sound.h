@@ -1,10 +1,12 @@
-#ifndef _SOUND_H
-#define _SOUND_H
 
+#pragma once
 
+// Library includes
 #include <al.h>
 #include <alc.h>
 #include <alut.h>
+
+// Project includes
 #include "Framework.h"
 #include "Main.h"
 
@@ -60,5 +62,3 @@ public:
 	ALCcontext *Context;
 	ALCdevice *Device;
 };
-
-#endif

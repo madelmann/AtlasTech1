@@ -1,14 +1,17 @@
-#ifndef _FRUSTUM_H
-#define _FRUSTUM_H
 
+#pragma once
 
+// Library includes
+
+// Project includes
+#include "Matrix4.h"
+#include "Tools.h"
 #include "Tuple2.h"
 #include "Tuple3.h"
 #include "Tuple4.h"
-#include "Matrix4.h"
-#include "Main.h"
 
 
+struct AABBVolume;
 class BoundsDescriptor;
 
 
@@ -47,5 +50,3 @@ public:
 	float		fRatio;
 	FrustumPlane	frustumPlanes[6];
 };
-
-#endif

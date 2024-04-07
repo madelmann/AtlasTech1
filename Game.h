@@ -1,9 +1,11 @@
-#ifndef _GAME_H
-#define _GAME_H
 
+#pragma once
 
-#include "Main.h"
-//#include "Player.h"
+// Library includes
+
+// Project includes
+#include "Map.h"
+#include "Player.h"
 
 
 // Game types
@@ -50,6 +52,3 @@ public:
 
 	CPlayer	*mPlayer;
 };
-
-
-#endif

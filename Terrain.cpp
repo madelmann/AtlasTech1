@@ -1,4 +1,8 @@
-#include "main.h"
+
+// Library includes
+
+// Project includes
+#include "Terrain.h"
 
 
 // In this file we just added a third texture coordinate on our terrain for 

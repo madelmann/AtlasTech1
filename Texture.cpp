@@ -1,4 +1,14 @@
-#include "Main.h"
+
+// Library includes
+#include "jpeglib.h"
+
+// Project includes
+#include "Console.h"
+#include "Game.h"
+#include "GLWrapper.h"
+#include "Globals.h"
+#include "Texture.h"
+#include "TGA.h"
 
 
 CTextureManager::CTextureManager()
@@ -30,7 +40,7 @@ void CTextureManager::Apply()
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, iMinFilter[iFilter]);		// when texture area is small, bilinear filter the closest mipmap
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, iMaxFilter[iFilter]);		// when texture area is large, bilinear filter the first mipmap
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Engine->fAnsitropicFilter);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, g_fAnsitropicFilter);
 
 		//gluBuild2DMipmaps(GL_TEXTURE_2D, 3, Textures[i].iWidth, Textures[i].iHeight, GL_RGB, GL_UNSIGNED_BYTE, &Texture[i]);
 	}
@@ -118,7 +128,7 @@ GLuint CTextureManager::CreateBMPTexture(char* Filename)
     // when texture area is large, bilinear filter the first mipmap
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, iMaxFilter[iFilter]);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Engine->fAnsitropicFilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, g_fAnsitropicFilter);
 
 	GLfloat wrap = 1.0f;
 
@@ -129,7 +139,7 @@ GLuint CTextureManager::CreateBMPTexture(char* Filename)
 
 	// Build Mipmaps (builds different versions of the picture for distances - looks better)
 	GLint gliFormat = GL_RGB;
-	if(Engine->bCompressedTextures)
+	if(g_bCompressedTextures)
 		gliFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 
 	gluBuild2DMipmaps(GL_TEXTURE_2D, gliFormat, pImage->sizeX, pImage->sizeY, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
@@ -338,7 +348,7 @@ GLuint CTextureManager::CreateJPGTexture(char* Filename)
     // when texture area is large, bilinear filter the first mipmap
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, iMaxFilter[iFilter]);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Engine->fAnsitropicFilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, g_fAnsitropicFilter);
 
 	GLfloat wrap = 1.0f;
 
@@ -349,7 +359,7 @@ GLuint CTextureManager::CreateJPGTexture(char* Filename)
 
 	// Build Mipmaps (builds different versions of the picture for distances - looks better)
 	GLint gliFormat = GL_RGB;
-	if(Engine->bCompressedTextures)
+	if(g_bCompressedTextures)
 		gliFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 
 	gluBuild2DMipmaps(GL_TEXTURE_2D, gliFormat, pImage->sizeX, pImage->sizeY, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
@@ -525,7 +535,7 @@ GLuint CTextureManager::CreateTGATexture(char* Filename)
     // when texture area is large, bilinear filter the first mipmap
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, iMaxFilter[iFilter]);//GL_LINEAR );
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Engine->fAnsitropicFilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, g_fAnsitropicFilter);
 
 	GLfloat wrap = 1.0f;
 
@@ -544,7 +554,7 @@ GLuint CTextureManager::CreateTGATexture(char* Filename)
 
 	//if(texture.iBpp == 24)
 	//{
-	//	if(Engine->bCompressedTextures)
+	//	if(g_bCompressedTextures)
 	//		gliFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 	//	else
 	//		gliFormat = GL_RGB;
@@ -552,7 +562,7 @@ GLuint CTextureManager::CreateTGATexture(char* Filename)
 	//else
 	//	if(texture.iBpp == 32)
 	//	{
-	//		if(Engine->bCompressedTextures)
+	//		if(g_bCompressedTextures)
 	//			gliFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 	//		else
 	//			gliFormat = GL_RGBA;
@@ -734,7 +744,7 @@ unsigned char* CTextureManager::GetTGAData(char* Filename)
 inline GLuint CTextureManager::IndexOf(char Filename[255])
 {
 	//for(unsigned int i = 0; i < Textures.size(); i += 1) {
-	for ( vector<CTexture*>::iterator it = Textures.begin(); it != Textures.end(); it++ ) {
+	for ( std::vector<CTexture*>::iterator it = Textures.begin(); it != Textures.end(); it++ ) {
 		if((*it)->sName.compare(Filename) == 0 ) {
 			return (*it)->mId;
 		}

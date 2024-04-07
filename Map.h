@@ -1,10 +1,10 @@
-#ifndef _MAP_H
-#define _MAP_H
 
+#pragma once
 
+// Library includes
+
+// Project includes
 #include "Tools.h"
-#include "Main.h"
-//#include "vector3f.h"
 
 
 #define MAP_VERSION_1		8
@@ -98,6 +98,3 @@ public:
 		CVector3	vWaterColor;				// Water color
 		CVector3	vWind;						// Wind direction
 };
-
-
-#endif

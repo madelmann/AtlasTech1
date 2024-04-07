@@ -9,6 +9,10 @@
 
 
 
+// Library includes
+//#include <timeapi.h>
+
+// Project includes
 #include "Main.h"
 #include "Engine.h"
 
@@ -38,31 +42,6 @@
 	(a)[2] = (b)[2] - (c)[2];
 
 
-// Our function pointers for the ARB multitexturing functions
-PFNGLMULTITEXCOORD2FARBPROC		glMultiTexCoord2fARB	= NULL;
-PFNGLACTIVETEXTUREARBPROC		glActiveTextureARB		= NULL;
-PFNWGLEXTSWAPCONTROLPROC		glSwapIntervalEXT		= NULL;
-PFNWGLEXTGETSWAPINTERVALPROC	glGetSwapIntervalEXT	= NULL;
-
-// This is our fog extension function pointer to set a vertice's depth
-PFNGLFOGCOORDFEXTPROC			glFogCoordfEXT			= NULL;
-
-// This defines our point sprite extension
-PFNGLPOINTPARAMETERFARBPROC		glPointParameterfARB	= NULL;
-PFNGLPOINTPARAMETERFVARBPROC	glPointParameterfvARB	= NULL;
-
-// GL_ARB_occlusion_query - Begin
-PFNGLGENQUERIESARBPROC			glGenQueriesARB			= NULL;
-PFNGLDELETEQUERIESARBPROC		glDeleteQueriesARB		= NULL;
-PFNGLISQUERYARBPROC				glIsQueryARB			= NULL;
-PFNGLBEGINQUERYARBPROC			glBeginQueryARB			= NULL;
-PFNGLENDQUERYARBPROC			glEndQueryARB			= NULL;
-PFNGLGETQUERYIVARBPROC			glGetQueryivARB			= NULL;
-PFNGLGETQUERYOBJECTIVARBPROC	glGetQueryObjectivARB	= NULL;
-PFNGLGETQUERYOBJECTUIVARBPROC	glGetQueryObjectuivARB	= NULL;
-// GL_ARB_occlusion_query - End
-
-
 EngineSpace::CEngine	*Engine							= NULL;
 CBasicInterpreter		g_BasicInterpreter;
 CBotManager				g_Manager_Bot;
@@ -73,7 +52,7 @@ CConsole				*Console						= NULL;
 EditorSpace::Editor		*Editor							= NULL;
 CEntityManager			g_Manager_Entity;
 CFileManager			g_Manager_File;
-CFloraManager			g_Manager_Flora;
+//CFloraManager			g_Manager_Flora;
 CGLFont					Font;													// Font object used to display text to the screen
 CFrustum				Frustum;
 CLight					Light[8];
@@ -84,12 +63,12 @@ C3DSObjectManager		g_Manager_3DSObject;
 CObjectManager			g_Manager_Object;
 CParticleManager		g_Manager_ParticleSystem;
 CPhysicManager			g_Manager_Physic;
-CPlayerManager			g_Manager_Player;
+CPlayerManager*			g_Manager_Player				= NULL;
 CQuadTree				QuadTree;
 CRegionManager			g_Manager_Region;
 CScene					Scene;
 CScriptManager			g_Manager_Script;
-CShaderManager			*Shader							= NULL;
+CShaderManager*			g_Manager_Shader				= NULL;
 CSoundManager			g_Manager_Sound;
 CStaticObjectManager	g_Manager_StaticObject;
 CStatisticsManager		g_Manager_Statistic;
@@ -102,37 +81,47 @@ CWater					Water;
 
 // Global variables - Begin
 // Engine
+int					InsertIndex = -1;
+
+bool				bBillBoardCheat			= false;
+
+//int				g_DetailScale			= 8;										// This handles the current scale for the texture matrix for the detail texture
 int					g_FrameCount			= 0;
+
+bool				g_bCompressedTextures	= false;
+//bool				g_bDetail				= true;										// This controls if we have detail texturing on or off
+bool				g_bInsertInWorld		= false;
+
+double				g_dCurTime;
+double				g_dFrequency;
+double				g_dLastTime;
+
+float				g_fAnsitropicFilter		= 1.0f;
 float				g_fCameraAngleX			= 0.0f;
 float				g_fCameraAngleY			= 0.0f;
 float				g_fCameraAngleZ			= 0.0f;
 float				g_fCameraOverFloor		= CAMERAOVERFLOOR_DEFAULT;
+float				g_fElpasedTime;
 float				g_fFrameInterval		= 0.0f;
 float				g_fMouseSpeedDown		= 495.0f;
-int					g_iViewWidth			= 1;
+
 float				g_iHeightMapScaleX		= 16;
 float				g_iHeightMapScaleY		= 2;
 float				g_iHeightMapScaleZ		= 16;
+int					g_iViewWidth			= 1;
 
-float				g_fElpasedTime;
-double				g_dCurTime;
-double				g_dFrequency;
-double				g_dLastTime;
 // Editor
 int					g_iEditMode				= EditorSpace::Selection;
+int					g_iLightSource			= 1;
+int					g_iLocalPlayer			= -1;
+int					g_iMapIndex				= 0;
+int					g_iMaxLODLevel			= 3;
 int					g_iOctreeX				= 0;
 int					g_iOctreeZ				= 0;
 int					g_iVertexX				= 0;
 int					g_iVertexZ				= 0;
-// Lighting
-int					g_iLightSource			= 1;
-// Various
-bool				bBillBoardCheat			= false;
 GLuint				g_iSkyBoxFaceCulling	= GL_BACK;
-//bool				g_bDetail				= true;										// This controls if we have detail texturing on or off
-//int				g_DetailScale			= 8;										// This handles the current scale for the texture matrix for the detail texture
-int					g_iMapIndex				= 0;
-int					g_iLocalPlayer			= -1;
+
 int					g_TextureSize			= 512;										// The size of the textures that we will render on the fly (reflection/refraction/depth)
 float				g_halfWaterSize			= 2048;
 float				g_WaterUV				= 10.0f;									// The scale for the water textures
@@ -140,9 +129,6 @@ const float			kCausticScale			= 4.0f;										// The scale for the caustics (li
 int					MeshID_SkyBox			= 0;
 CBot				*g_pActiveBot			= NULL;
 char*				g_sStatusMessage		= "";
-
-bool				g_bInsertInWorld		= false;
-int					InsertIndex				= -1;
 // Global variables - End
 
 
@@ -295,7 +281,6 @@ CEngine::CEngine()
 	bCellShading = false;
 	bClipping = true;
 	bColorMaterial = false;
-	bCompressedTextures = false;
 	bDrawFloor = false;
 	bDrawRoof = false;
 	bFrustumCulling = true;
@@ -312,7 +297,6 @@ CEngine::CEngine()
 		Light[i].clear();
 		Light[i].setLight();
 	}
-	fAnsitropicFilter = 1.0f;
 	fFOV = 50.0f;
 	fMAXAnsitropicFilter = 1.0f;
 	fMotionBlur = 0.0f;
@@ -324,7 +308,6 @@ CEngine::CEngine()
 	iFPS = 0;
 	iFCFramesAgo = 2;
 	iMaxLights = 8;
-	iMaxLODLevel = 3;
 	iMultiSampling = 0;
 	iShadows = 0;
 	uiMaxOcclusionCalculatedBeforeFPS = 3;
@@ -332,9 +315,10 @@ CEngine::CEngine()
 
 CEngine::~CEngine()
 {
-	SAFE_DELETE ( Editor );
-	SAFE_DELETE ( Shader );
-	SAFE_DELETE ( g_Manager_Texture );
+	SAFE_DELETE( Editor );
+	SAFE_DELETE( g_Manager_Player );
+	SAFE_DELETE( g_Manager_Shader );
+	SAFE_DELETE( g_Manager_Texture );
 }
 
 int CEngine::CheckOpenGLExtension(char* extensionName)
@@ -400,9 +384,10 @@ void CEngine::ConfigRead(char *Filename)
 
 void CEngine::Init()
 {
+	g_Manager_Player = new CPlayerManager();
 	g_Manager_Physic.Reset();
 	g_Manager_Physic.SetGravity(CVector3(0.0f, -9.81f, 0.0f));
-	Shader = new CShaderManager;
+	g_Manager_Shader = new CShaderManager;
 	g_Manager_Texture = new CTextureManager();
 	g_Manager_Texture->Reset();
 	GUI.setscreen(&Screen);
@@ -577,19 +562,19 @@ void CEngine::Init()
 	g_Manager_Texture->CreateTexture("Dummy.bmp");								// !This has to be the last texture loaded before the custom textures!
 
 
-	Shader->Add("BumpMap");
-	Shader->Add("bumpy");
-	Shader->Add("Cell Shading");
-	Shader->Add("Cell Shading 2");
-	Shader->Add("Debug Normals");
-	Shader->Add("Per Pixel Lighting");
-	Shader->Add("Per Pixel Lighting2");
-	Shader->Add("Phong Light");
-	Shader->Add("Phong Light+");
-	Shader->Add("Simple Toon");
-	Shader->Add("Simple Toon 2");
-	Shader->Add("Simple Toon 3");
-	Shader->Add("Water");
+	g_Manager_Shader->Add("BumpMap");
+	g_Manager_Shader->Add("bumpy");
+	g_Manager_Shader->Add("Cell Shading");
+	g_Manager_Shader->Add("Cell Shading 2");
+	g_Manager_Shader->Add("Debug Normals");
+	g_Manager_Shader->Add("Per Pixel Lighting");
+	g_Manager_Shader->Add("Per Pixel Lighting2");
+	g_Manager_Shader->Add("Phong Light");
+	g_Manager_Shader->Add("Phong Light+");
+	g_Manager_Shader->Add("Simple Toon");
+	g_Manager_Shader->Add("Simple Toon 2");
+	g_Manager_Shader->Add("Simple Toon 3");
+	g_Manager_Shader->Add("Water");
 
 	// Initialize the font object so we can display output using it.
 	if(!Font.Initialize(g_hDC, 25, "Arial"))
@@ -1044,7 +1029,7 @@ void glPrintText(float x, float y, char* text, ...)
 	Font.PrintText(strText, x, y);
 }
 
-void glPrintText(float x, float y, string* text, ...)
+void glPrintText(float x, float y, std::string* text, ...)
 {
 	char	strText[255];
 	va_list	argumentPtr;														// This will hold the pointer to the argument list
@@ -1295,9 +1280,9 @@ void RenderBullets()
     {
 		if(g_Manager_Bullet.Bullet[i].iFrom == g_iLocalPlayer)
 		{
-			a = mathsSqr(g_Manager_Bullet.Bullet[i].mPosition.x - g_Manager_Player.Player[g_Manager_Bullet.Bullet[i].iFrom].mPosition.x);
-			b = mathsSqr(g_Manager_Bullet.Bullet[i].mPosition.y - g_Manager_Player.Player[g_Manager_Bullet.Bullet[i].iFrom].mPosition.y);
-			c = mathsSqr(g_Manager_Bullet.Bullet[i].mPosition.z - g_Manager_Player.Player[g_Manager_Bullet.Bullet[i].iFrom].mPosition.z);
+			a = mathsSqr(g_Manager_Bullet.Bullet[i].mPosition.x - g_Manager_Player->Player[g_Manager_Bullet.Bullet[i].iFrom].mPosition.x);
+			b = mathsSqr(g_Manager_Bullet.Bullet[i].mPosition.y - g_Manager_Player->Player[g_Manager_Bullet.Bullet[i].iFrom].mPosition.y);
+			c = mathsSqr(g_Manager_Bullet.Bullet[i].mPosition.z - g_Manager_Player->Player[g_Manager_Bullet.Bullet[i].iFrom].mPosition.z);
 			d = sqrt(a + b + c);
 
 			if(d <= 20.0f)
@@ -1313,7 +1298,7 @@ void RenderBullets()
 			}
 			else
 			{
-				Texture_SetActiveID(g_Manager_Player.Player[g_Manager_Bullet.Bullet[i].iFrom].Weapon.iTexture_Bullet);
+				g_Manager_Texture->SetActiveTextureID(g_Manager_Player->Player[g_Manager_Bullet.Bullet[i].iFrom].Weapon.iTexture_Bullet);
 				glColor3f(1.0f, 1.0f, 1.0f);
 
 				// For testing purposes only - BEGIN
@@ -1357,15 +1342,17 @@ void RenderGrass()
 
 	glEnable(GL_TEXTURE_2D);
 
+	float time = static_cast<float>( GetTickCount() );
+
 	static float fsinus = 0.0f;
 	if(Map.vWind.x != 0.0f)
-		fsinus += 0.003f * sin((float)timeGetTime() / 750.0f);
+		fsinus += 0.003f * sin(time / 750.0f);
 	else
 		fsinus = 0.0f;
 
 	static float fsinus2 = 0.0f;
 	if(Map.vWind.z != 0.0f)
-		fsinus2 += 0.003f * sin((float)timeGetTime() / 750.0f);
+		fsinus2 += 0.003f * sin(time / 750.0f);
 	else
 		fsinus2 = 0.0f;
 
@@ -1437,7 +1424,7 @@ void RenderImageAtFullScreen(char FName[255])
 
 void RenderInterface()
 {
-	//sprintf_s(g_sWindowText, "x = %f, y = %f, z = %f", g_Manager_Player.mPlayer[g_iLocalPlayer].vPosition.x, g_Manager_Player.mPlayer[g_iLocalPlayer].vPosition.y, g_Manager_Player.mPlayer[g_iLocalPlayer].vPosition.z);
+	//sprintf_s(g_sWindowText, "x = %f, y = %f, z = %f", g_Manager_Player->mPlayer[g_iLocalPlayer].vPosition.x, g_Manager_Player->mPlayer[g_iLocalPlayer].vPosition.y, g_Manager_Player->mPlayer[g_iLocalPlayer].vPosition.z);
 	//SetWindowText(g_hWnd, g_sWindowText);
 
 	glDisable(GL_LIGHTING);
@@ -1495,12 +1482,12 @@ void RenderInterface()
 						glPrintText(-0.35f, 0.3f - i * 0.1f, g_Manager_Statistic.Statistic[i].cText);
 
 						// DEBUG - for testing purposes only - Begin
-						glPrintText(-0.95f, 0.83f - i * 0.09f, "%s %i X=%.2f/Z=%.2f", g_Manager_Player.Player[i].getName(), g_Manager_Player.Player[i].iHealth, g_Manager_Player.Player[i].mPosition.x, g_Manager_Player.Player[i].mPosition.z);
-						//glPrintText(-0.95f, 0.83f - i * 0.18f - 0.09f, "%s OX=%d/OZ=%d", g_Manager_Player.Player[i].Name, g_Manager_Player.Player[i].iOctreeX, g_Manager_Player.Player[i].iOctreeZ);
+						glPrintText(-0.95f, 0.83f - i * 0.09f, "%s %i X=%.2f/Z=%.2f", g_Manager_Player->Player[i].getName(), g_Manager_Player->Player[i].iHealth, g_Manager_Player->Player[i].mPosition.x, g_Manager_Player->Player[i].mPosition.z);
+						//glPrintText(-0.95f, 0.83f - i * 0.18f - 0.09f, "%s OX=%d/OZ=%d", g_Manager_Player->Player[i].Name, g_Manager_Player->Player[i].iOctreeX, g_Manager_Player->Player[i].iOctreeZ);
 						// DEBUG - for testing purposes only - End
 					}
 
-					glPrintText(-0.35f, 0.35f -  g_Manager_Player.Count * 0.1f, "-----------------------------------------------------------");
+					glPrintText(-0.35f, 0.35f -  g_Manager_Player->Count * 0.1f, "-----------------------------------------------------------");
 				}
 			}
 		}
@@ -1595,20 +1582,20 @@ void RenderPlayers()
 {
 	glEnable(GL_TEXTURE_2D);
 
-	for(int i = g_Manager_Player.Count - 1; i >= 0; i -= 1)		// counting down is faster than counting up
+	for(int i = g_Manager_Player->Count - 1; i >= 0; i -= 1)		// counting down is faster than counting up
     {
-	    if(		(Game.bPlayMode && g_iLocalPlayer != i && !g_Manager_Player.Player[i].bAI)
+	    if(		(Game.bPlayMode && g_iLocalPlayer != i && !g_Manager_Player->Player[i].bAI)
 			||	(!Game.bPlayMode && g_iLocalPlayer == i)
 			)
 	    {
 		    glPushMatrix();
-				glTranslatef(g_Manager_Player.Player[i].mPosition.x, g_Manager_Player.Player[i].mPosition.y, g_Manager_Player.Player[i].mPosition.z);
-				//glRotatef(g_Manager_Player.Player[i].mRotation.x, 1.0f, 0.0f, 0.0f);
-				glRotatef(g_Manager_Player.Player[i].mRotation.y + 100.0f, 0.0f, 1.0f, 0.0f);
-				//glRotatef(g_Manager_Player.Player[i].mRotation.z, 0.0f, 0.0f, 1.0f);
+				glTranslatef(g_Manager_Player->Player[i].mPosition.x, g_Manager_Player->Player[i].mPosition.y, g_Manager_Player->Player[i].mPosition.z);
+				//glRotatef(g_Manager_Player->Player[i].mRotation.x, 1.0f, 0.0f, 0.0f);
+				glRotatef(g_Manager_Player->Player[i].mRotation.y + 100.0f, 0.0f, 1.0f, 0.0f);
+				//glRotatef(g_Manager_Player->Player[i].mRotation.z, 0.0f, 0.0f, 1.0f);
 
-				Material_Apply(g_Manager_Entity.Object[g_Manager_Player.Player[i].iModel].iMaterial, false);
-				g_Manager_Entity.Object[g_Manager_Player.Player[i].iModel].Render();
+				g_Manager_Material.Apply(g_Manager_Entity.Object[g_Manager_Player->Player[i].iModel].iMaterial, false);
+				g_Manager_Entity.Object[g_Manager_Player->Player[i].iModel].Render();
 
 				// Shadows
 				if(Engine->iShadows >= 2)
@@ -1617,19 +1604,19 @@ void RenderPlayers()
 						glDisable(GL_LIGHTING);
 						glDisable(GL_TEXTURE_2D);
 
-						//glRotatef(-g_Manager_Player.Player[i].mRotation.x, 1.0f, 0.0f, 0.0f);
-						glRotatef(-g_Manager_Player.Player[i].mRotation.y, 0.0f, 1.0f, 0.0f);
-						//glRotatef(-g_Manager_Player.Player[i].mRotation.z, 0.0f, 0.0f, 1.0f);
+						//glRotatef(-g_Manager_Player->Player[i].mRotation.x, 1.0f, 0.0f, 0.0f);
+						glRotatef(-g_Manager_Player->Player[i].mRotation.y, 0.0f, 1.0f, 0.0f);
+						//glRotatef(-g_Manager_Player->Player[i].mRotation.z, 0.0f, 0.0f, 1.0f);
 
 						CVector3 pos = Light[LIGHT_SUN].getPosition();
-						l[0] = pos.x - g_Manager_Player.Player[i].mPosition.x;
-						l[1] = pos.y - g_Manager_Player.Player[i].mPosition.y;
-						l[2] = pos.z - g_Manager_Player.Player[i].mPosition.z;
+						l[0] = pos.x - g_Manager_Player->Player[i].mPosition.x;
+						l[1] = pos.y - g_Manager_Player->Player[i].mPosition.y;
+						l[2] = pos.z - g_Manager_Player->Player[i].mPosition.z;
 						
 						glShadowProjection(l, e, n);
 						glColor3f(0.01f, 0.01f, 0.01f);
 
-						g_Manager_Entity.Object[g_Manager_Player.Player[i].iModel].Render();
+						g_Manager_Entity.Object[g_Manager_Player->Player[i].iModel].Render();
 						
 						glEnable(GL_TEXTURE_2D);
 						glEnable(GL_LIGHTING);
@@ -1656,15 +1643,15 @@ void RenderPlayers()
 
 		glColor3f(0.0f, 0.0f, 0.0f);						// Set The Outline Color ( NEW )
 
-		for(int i = g_Manager_Player.Count - 1; i >= 0; i -= 1)		// counting down is faster than counting up
+		for(int i = g_Manager_Player->Count - 1; i >= 0; i -= 1)		// counting down is faster than counting up
 		{
 			if(!Game.bPlayMode || g_iLocalPlayer != i)
 			{
 				glPushMatrix();
-					glTranslatef(g_Manager_Player.Player[i].mPosition.x, g_Manager_Player.Player[i].mPosition.y, g_Manager_Player.Player[i].mPosition.z);
-					glRotatef(g_Manager_Player.Player[i].mRotation.y + 100.0f, 0.0f, 1.0f, 0.0f);
+					glTranslatef(g_Manager_Player->Player[i].mPosition.x, g_Manager_Player->Player[i].mPosition.y, g_Manager_Player->Player[i].mPosition.z);
+					glRotatef(g_Manager_Player->Player[i].mRotation.y + 100.0f, 0.0f, 1.0f, 0.0f);
 
-					g_Manager_Entity.Object[g_Manager_Player.Player[i].iModel].Render();
+					g_Manager_Entity.Object[g_Manager_Player->Player[i].iModel].Render();
 				glPopMatrix();
 			}
 		}
@@ -1723,7 +1710,7 @@ void RenderScene()
 
 	glColor3f(1.0f, 1.0f, 1.0f);												// !BUG FIX!: Set current color to white
 
-	Material_Apply(0, true);													// !BUG FIX!: Reset material to ensure correct rendering of menu and console
+	g_Manager_Material.Apply(0, true);													// !BUG FIX!: Reset material to ensure correct rendering of menu and console
 
 	if(!Game.bPlayMode)															// Render editor preview
 	{
@@ -1774,7 +1761,7 @@ void RenderScene()
 				glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
 				glRotatef(roty, 0.0f, 1.0f, 0.0f);
 
-				Material_Apply(go->iMaterial, false);
+				g_Manager_Material.Apply(go->iMaterial, false);
 
 				if(g_iEditMode == EditorSpace::Particle)
 				{
@@ -1973,7 +1960,7 @@ void RenderSkyBox()
 	if(!Map.bFogAffectsSkybox)
 		glDisable(GL_FOG);
 
-	Material_Apply(Map.iMaterial, true);
+	g_Manager_Material.Apply(Map.iMaterial, true);
 
 	glCallList(MeshID_SkyBox);
 
@@ -2015,7 +2002,7 @@ void RenderTest1()
 	glPushMatrix();
 		glTranslatef(60.0f, QuadTree.getHeight(60.0f, 0.0f), 0.0f);
 
-		Shader->Begin("BumpMap");
+		g_Manager_Shader->Begin("BumpMap");
 			glActiveTextureARB(GL_TEXTURE0_ARB);
 			glEnable(GL_TEXTURE_2D); 
 			Texture_SetActive("bumpmap2_test1_normal.jpg");
@@ -2024,10 +2011,10 @@ void RenderTest1()
 			glEnable(GL_TEXTURE_2D);
 			Texture_SetActive("bumpmap2_test1_color.jpg");
 
-			uniform = glGetUniformLocationARB(Shader->GetProgram(), "normalMap");
+			uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "normalMap");
 			glUniform1iARB(uniform, 0);
 
-			uniform = glGetUniformLocationARB(Shader->GetProgram(), "colorMap"); 
+			uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "colorMap"); 
 			glUniform1iARB(uniform, 1);
 
 			glBegin(GL_QUADS);
@@ -2073,7 +2060,7 @@ void RenderTest1()
 
 			// Reset multi texture to first texture slot
 			glActiveTextureARB(GL_TEXTURE0_ARB);
-		Shader->End();
+		g_Manager_Shader->End();
 	glPopMatrix();
 
 	glEnable(GL_CULL_FACE);
@@ -2086,7 +2073,7 @@ void RenderTest2(Texture &texture)
 	glPushMatrix();
 		glTranslatef(100.0f, QuadTree.getHeight(100.0f, 100.0f), 100.0f);
 
-		Texture_SetActiveID(texture.getId());
+		g_Manager_Texture->SetActiveTextureID(texture.getId());
 
 		glBegin(GL_QUADS);
 			glTexCoord2f(0.0f, 0.0f);
@@ -2140,12 +2127,12 @@ void RenderTest3()
 	glPushMatrix();
 		glTranslatef(60.0f, QuadTree.getHeight(60.0f, 0.0f), 0.0f);
 
-		Shader->Begin("Fresnel Reflection");
+		g_Manager_Shader->Begin("Fresnel Reflection");
 			glActiveTextureARB(GL_TEXTURE0_ARB);
 			glEnable(GL_TEXTURE_2D); 
 			Texture_SetActive("bumpmap2_test1_normal.jpg");
 
-			uniform = glGetUniformLocationARB(Shader->GetProgram(), "cubemap");
+			uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "cubemap");
 			glUniform1iARB(uniform, 0);
 
 			glBegin(GL_QUADS);
@@ -2191,7 +2178,7 @@ void RenderTest3()
 
 			// Reset multi texture to first texture slot
 			glActiveTextureARB(GL_TEXTURE0_ARB);
-		Shader->End();
+		g_Manager_Shader->End();
 	glPopMatrix();
 
 	glEnable(GL_CULL_FACE);
@@ -2218,7 +2205,7 @@ void RenderToTexture(Texture &texture)
 
 		glColor3f(1.0f, 1.0f, 1.0f);											// !BUG FIX!: Set current color to white
 
-		Material_Apply(0, true);												// !BUG FIX!: Reset material to ensure correct rendering of menu and console
+		g_Manager_Material.Apply(0, true);												// !BUG FIX!: Reset material to ensure correct rendering of menu and console
 
 		for(int i = 0; i < Engine->iMaxLights; i += 1)
 		{
@@ -2268,6 +2255,8 @@ void RenderWeapon()
 	if(Console->IsVisible())
 		return;
 
+	float time = static_cast<float>(GetTickCount());
+
 	glPushMatrix();
 		glLoadIdentity();
 
@@ -2282,20 +2271,20 @@ void RenderWeapon()
 			if(Engine->Keybinding.kbRun.bPressed && (Engine->Keybinding.kbBackward.bPressed || Engine->Keybinding.kbForward.bPressed || Engine->Keybinding.kbStrafeLeft.bPressed || Engine->Keybinding.kbStrafeRight.bPressed))
 			{
 				// schnell
-				movex = float(0.2f * sin((float)timeGetTime() / 250));
-				movey = float(0.05f * sin(2 * (float)timeGetTime() / 250));
+				movex = float(0.2f * sin(time / 250));
+				movey = float(0.05f * sin(2 * time / 250));
 			}
 			else if(Engine->Keybinding.kbBackward.bPressed || Engine->Keybinding.kbForward.bPressed || Engine->Keybinding.kbStrafeLeft.bPressed || Engine->Keybinding.kbStrafeRight.bPressed)
 			{
 				// mittel
-				movex = 0.15f * sin((float)timeGetTime() / 1000);
-				movey = 0.1f * sin(2 * (float)timeGetTime() / 1000);
+				movex = 0.15f * sin(time / 1000);
+				movey = 0.1f * sin(2 * time / 1000);
 			}
 			else
 			{
 				// langsam
-				movex = 0.05f * sin((float)timeGetTime() / 1000);
-				movey = 0.025f * sin(2 * (float)timeGetTime() / 1000);
+				movex = 0.05f * sin(time / 1000);
+				movey = 0.025f * sin(2 * time / 1000);
 			}
 			// Lissajous - End
 
@@ -2318,7 +2307,7 @@ void RenderWeapon()
 							glEnable(GL_BLEND);
 							glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 							glActiveTextureARB(GL_TEXTURE0_ARB);
-							Texture_SetActiveID(Game.mPlayer->Weapon.iTexture_Muzzle);
+							g_Manager_Texture->SetActiveTextureID(Game.mPlayer->Weapon.iTexture_Muzzle);
 							//glBindTexture(GL_TEXTURE_2D, g_Manager_Texture->Textures[Game.mPlayer->Weapon.iTexture_Muzzle]->mId);
 
 							glBegin(GL_QUADS);
@@ -2421,7 +2410,7 @@ void RenderWorld()
 	//{
 	//	glEnable(GL_CLIP_PLANE0);
 
-	//	double TopTerrainPlane[4] = {0.0, 1.0, 0.0, g_Manager_Player.mPlayer[g_iLocalPlayer].GetPosition().y + 5.0f};
+	//	double TopTerrainPlane[4] = {0.0, 1.0, 0.0, g_Manager_Player->mPlayer[g_iLocalPlayer].GetPosition().y + 5.0f};
 	//	glClipPlane(GL_CLIP_PLANE0, TopTerrainPlane);
 	//}
 
@@ -2442,7 +2431,7 @@ void RenderWorld()
 		glEnable(GL_TEXTURE_1D);
 		glBindTexture(GL_TEXTURE_1D, Texture_IndexOf("CellShading1.bmp"));
 
-		Shader->Begin("Simple Toon 3");
+		g_Manager_Shader->Begin("Simple Toon 3");
 	}
 	else
 	{
@@ -2453,7 +2442,7 @@ void RenderWorld()
 
 	if(Engine->bCellShading)
 	{
-		Shader->End();
+		g_Manager_Shader->End();
 		glDisable(GL_TEXTURE_1D);
 
 		Scene.BeginCellShading();
@@ -2475,17 +2464,17 @@ void RenderWorld()
 		glEnable(GL_TEXTURE_1D);
 		glBindTexture(GL_TEXTURE_1D, Texture_IndexOf("CellShading3.bmp"));
 
-		//Shader->Begin("Cell shading");
+		//g_Manager_Shader->Begin("Cell shading");
 		float color[4] = {0.75f, 0.95f, 1.0f, 1.0f};
 		//float color[4] = {0.29f, 0.41f, 0.27f, 1.0f};
-		Shader->Bind("color", color, 4);
+		g_Manager_Shader->Bind("color", color, 4);
 		float g_light_position[4] = {5.0f, 5.0f, 5.0f, 0.0f};
-		Shader->Bind("light_position", g_light_position, 4);
+		g_Manager_Shader->Bind("light_position", g_light_position, 4);
 	}
 	RenderPlayers();															// Render players
 	if(Engine->bCellShading)
 	{
-		Shader->End();
+		g_Manager_Shader->End();
 		glDisable(GL_TEXTURE_1D);
 
 		Scene.BeginCellShading();
@@ -2532,16 +2521,6 @@ void RenderWorld()
 
 	if(Map.bWaterEnabled)
 		glDisable(GL_CLIP_PLANE0);													// Turn our clipping plane off, just in case we've used it
-}
-
-double roundd(double r)
-{
-	return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
-}
-
-float roundf(float r)
-{
-	return (r > 0.0f) ? floor(r + 0.5f) : ceil(r - 0.5f);
 }
 
 void SetCameraPosition()
@@ -2633,4 +2612,96 @@ void writeTGA(char *name, unsigned char *buff, int w, int h)
 	fwrite(buff, sizeof(char), w * h * 3, pFile);
 
 	fclose(pFile);
+}
+
+
+CGraphicObject* Entity_add(char* filename)
+{
+	CGraphicObject* result = NULL;
+
+	if (!filename)
+		return result;
+
+	char* sExtention = "";
+	sExtention = ExtractFileExt(filename);
+
+	int id = -1;
+	if (strcmpi(sExtention, "3ds") == 0)
+	{
+		id = g_Manager_3DSObject.Add(filename);
+		result = g_Manager_3DSObject.Mesh[id];
+	}
+	else if (strcmpi(sExtention, "md2") == 0)
+	{
+		id = g_Manager_Entity.Add(filename, filename);
+		result = &g_Manager_Entity.Object[id];
+	}
+	else if (strcmpi(sExtention, "particle") == 0)
+	{
+		id = g_Manager_StaticObject.Add(filename);
+		result = &g_Manager_StaticObject.Object[id];
+	}
+	else if (strcmpi(sExtention, "static") == 0)
+	{
+		id = g_Manager_ParticleSystem.Add(filename);
+		result = &g_Manager_ParticleSystem.Object[id];
+	}
+	else
+	{
+		Console->Output("ERROR: unsupported file format");
+		assert(0);
+	}
+
+	return result;
+}
+
+CSceneObject* GetObjectByID(int id)
+{
+	return Scene.GetObjectByID(id);
+}
+
+//int Material_Add(char* Filename)
+//{
+//	return g_Manager_Material.Add(Filename);
+//}
+
+//int Material_Apply(int index, bool bForceMaterialUse)
+//{
+//	return g_Manager_Material.Apply(index, bForceMaterialUse);
+//}
+
+GLuint Texture_Add(char* Filename)
+{
+	return g_Manager_Texture->CreateTexture(Filename);
+}
+
+GLuint Texture_IndexOf(char* Filename)
+{
+	return g_Manager_Texture->IndexOf(Filename);
+}
+
+void Texture_SetActive(char* Filename)
+{
+	g_Manager_Texture->SetActiveTexture(Filename);
+}
+
+//void Texture_SetActiveID(int id)
+//{
+//	g_Manager_Texture->SetActiveTextureID(id);
+//}
+
+int Object3DS_Add(char* Filename)
+{
+	return g_Manager_3DSObject.Add(Filename);
+}
+
+int Object3DS_IndexOf(char* Filename)
+{
+	return g_Manager_3DSObject.IndexOf(Filename);
+}
+
+CPlayer* Player_Add(char* Filename)
+{
+	g_Manager_Player->Add(Filename);
+	return &g_Manager_Player->Player[g_Manager_Player->iActive];
 }

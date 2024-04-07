@@ -1,13 +1,17 @@
-#ifndef _TEXTURE_H
-#define _TEXTURE_H
+
+#pragma once
 
 // Library includes
+#include <string>
 #include <vector>
-#include "jpeglib.h"
+//#include "jpeglib.h"
 
 // Project includes
-#include "Main.h"
+#include "GLWrapper.h"
 #include "Singleton.h"
+
+
+struct jpeg_decompress_struct;
 
 
 class Texture
@@ -91,7 +95,7 @@ public:
 	int		iBpp;
 	int		iHeight;
 	int		iWidth;
-	string	sName;
+	std::string	sName;
 	GLuint	mId;
 
 private:
@@ -136,8 +140,6 @@ public :
 protected:
 
 private:
-	vector<CTexture*>	Textures;
+	std::vector<CTexture*>	Textures;
 };
 
-
-#endif

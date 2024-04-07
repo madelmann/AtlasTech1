@@ -1,7 +1,9 @@
-#ifndef _MOUSE_H
-#define _MOUSE_H
 
+#pragma once
 
+// Library includes
+
+// Project includes
 #include "Tools.h"
 
 
@@ -45,5 +47,3 @@ public:
 };
 
 }
-
-#endif

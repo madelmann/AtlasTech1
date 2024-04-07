@@ -1,5 +1,9 @@
-#ifndef _SINGLETON_H_
-#define _SINGLETON_H_
+
+#pragma once
+
+// Library includes
+
+// Project includes
 
 
 template <class T_DERIVED>
@@ -20,5 +24,3 @@ private:
 	CSingleton& operator=( const CSingleton& ) {	return *this;	}
 };
 
-
-#endif

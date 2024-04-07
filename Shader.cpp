@@ -1,37 +1,11 @@
 
-#include "Main.h"
+// Library includes
+#include <fstream>
 
-
-// The function pointers for shaders
-PFNGLCREATESHADEROBJECTARBPROC glCreateShaderObjectARB = NULL;
-PFNGLSHADERSOURCEARBPROC glShaderSourceARB = NULL;
-PFNGLCOMPILESHADERARBPROC glCompileShaderARB = NULL;
-PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObjectARB = NULL;
-PFNGLATTACHOBJECTARBPROC glAttachObjectARB = NULL;
-PFNGLLINKPROGRAMARBPROC glLinkProgramARB = NULL;
-PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB = NULL;
-PFNGLUNIFORM1IARBPROC glUniform1iARB = NULL;
-PFNGLUNIFORM2IARBPROC glUniform2iARB = NULL;
-PFNGLUNIFORM3IARBPROC glUniform3iARB = NULL;
-PFNGLUNIFORM4IARBPROC glUniform4iARB = NULL;
-PFNGLUNIFORM1FARBPROC glUniform1fARB = NULL;
-PFNGLUNIFORM2FARBPROC glUniform2fARB = NULL;
-PFNGLUNIFORM3FARBPROC glUniform3fARB = NULL;
-PFNGLUNIFORM4FARBPROC glUniform4fARB = NULL;
-PFNGLUNIFORM1FVARBPROC glUniform1fvARB = NULL;
-PFNGLUNIFORM2FVARBPROC glUniform2fvARB = NULL;
-PFNGLUNIFORM3FVARBPROC glUniform3fvARB = NULL;
-PFNGLUNIFORM4FVARBPROC glUniform4fvARB = NULL;
-PFNGLUNIFORMMATRIX3FVARBPROC glUniformMatrix3fvARB = NULL;
-PFNGLUNIFORMMATRIX4FVARBPROC glUniformMatrix4fvARB = NULL;
-PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB = NULL;
-PFNGLDETACHOBJECTARBPROC glDetachObjectARB = NULL;
-PFNGLDELETEOBJECTARBPROC glDeleteObjectARB = NULL;
-PFNGLPROGRAMLOCALPARAMETER4FARBPROC glProgramLocalParameter4fARB;
-PFNGLBINDPROGRAMARBPROC glBindProgramARB;
-PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB;
-PFNGLGETINFOLOGARBPROC glGetInfoLogARB;
-
+// Project includes
+#include "Game.h"
+#include "Globals.h"
+#include "Shader.h"
 
 
 void CShader::Bind(const char* name, const float* value, size_t size)
@@ -59,17 +33,17 @@ void CShader::Bind(const char* name, const float* value, size_t size)
 /////
 ///////////////////////////////// LOAD TEXT FILE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-string CShader::LoadTextFile(string strFile)
+std::string CShader::LoadTextFile(std::string strFile)
 {
     // Open the file passed in
-    ifstream fin(strFile.c_str());
+	std::ifstream fin(strFile.c_str());
 
     // Make sure we opened the file correctly
     if(!fin)
 	return "";
 
-    string strLine = "";
-    string strText = "";
+	std::string strLine = "";
+	std::string strText = "";
 
     // Go through and store each line in the text file within a "string" object
     while(getline(fin, strLine))
@@ -91,10 +65,10 @@ string CShader::LoadTextFile(string strFile)
 /////
 ///////////////////////////////// INIT SHADERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-void CShader::InitShaders(string strVertex, string strFragment)
+void CShader::InitShaders(std::string strVertex, std::string strFragment)
 {
     // These will hold the shader's text file data
-    string strVShader, strFShader;
+	std::string strVShader, strFShader;
 
     // Make sure the user passed in a vertex and fragment shader file
     if(!strVertex.length() || !strFragment.length())
@@ -132,14 +106,14 @@ void CShader::InitShaders(string strVertex, string strFragment)
 	glGetObjectParameterivARB(mFragmentShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infoLogLength);
 	glGetInfoLogARB(mFragmentShader, 255, NULL, &infoLog);
 
-	Console->Output("Fragment Shader: \n%s", &infoLog);
+	//Console->Output("Fragment Shader: \n%s", &infoLog);
 
 	glCompileShaderARB(mVertexShader);
 
 	glGetObjectParameterivARB(mVertexShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infoLogLength);
 	glGetInfoLogARB(mVertexShader, 255, NULL, &infoLog);
 
-	Console->Output("Vertex Shader: \n%s", &infoLog);
+	//Console->Output("Vertex Shader: \n%s", &infoLog);
 
     // Next we create a program object to represent our shaders
     mProgramObject = glCreateProgramObjectARB();
@@ -155,7 +129,7 @@ void CShader::InitShaders(string strVertex, string strFragment)
 	glGetObjectParameterivARB(mProgramObject, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infoLogLength);
 	glGetInfoLogARB(mProgramObject, 255, NULL, &infoLog);
 
-	Console->Output("%s", &infoLog);
+	//Console->Output("%s", &infoLog);
 }
 
 
@@ -165,7 +139,7 @@ void CShader::InitShaders(string strVertex, string strFragment)
 /////
 ///////////////////////////////// GET VARIABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-GLint CShader::GetVariable(string strVariable)
+GLint CShader::GetVariable(std::string strVariable)
 {
     // If we don't have an active program object, let's return -1
     if(!mProgramObject)
@@ -223,7 +197,7 @@ CShaderManager::CShaderManager()
 
 CShaderManager::~CShaderManager()
 {
-	for(vector<CShader*>::iterator i = mShaders.begin(); i != mShaders.end(); i += 1)
+	for(std::vector<CShader*>::iterator i = mShaders.begin(); i != mShaders.end(); i += 1)
 	{
 		delete (*i);
 	}
@@ -236,7 +210,7 @@ CShaderManager::~CShaderManager()
 CShader* CShaderManager::Add(char* Filename)
 {
 	if ( !mUseShaders ) {
-		Console->Output("shaders disabled");
+		//Console->Output("shaders disabled");
 		return 0;
 	}
 	if ( strlen(Filename) <= 0 ) {
@@ -264,14 +238,14 @@ CShader* CShaderManager::Add(char* Filename)
 		{
 			// Display an error message saying the file was not found, then return NULL
 			sprintf(frag, "ERROR[CreateShader]: '%s' not found!\n", Filename);
-			Console->Output(frag);
+			//Console->Output(frag);
 			return NULL;
 		}
 	}
 	fclose(pFile);
 
-	string fragshader = frag;
-	string vertshader = vert;
+	std::string fragshader = frag;
+	std::string vertshader = vert;
 
 	mShaders.push_back(new CShader(Filename, vertshader, fragshader));
 	mCount++;
@@ -371,14 +345,14 @@ bool CShaderManager::Init()
 	// Make sure find the GL_ARB_shader_objects extension so we can use shaders.
 	if(!strstr(szGLExtensions, "GL_ARB_shader_objects"))
 	{
-		MessageBox(g_hWnd, "GL_ARB_shader_objects extension not supported!", "Error", MB_OK);
+		//MessageBox(g_hWnd, "GL_ARB_shader_objects extension not supported!", "Error", MB_OK);
 		return false;
 	}
 
 	// Make sure we support the GLSL shading language 1.0
 	if(!strstr(szGLExtensions, "GL_ARB_shading_language_100"))
 	{
-		MessageBox(g_hWnd, "GL_ARB_shading_language_100 extension not supported!", "Error", MB_OK);
+		//MessageBox(g_hWnd, "GL_ARB_shading_language_100 extension not supported!", "Error", MB_OK);
 		return false;
     }
 

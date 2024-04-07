@@ -1,9 +1,11 @@
-#ifndef _USER_INTERFACE_H
-#define _USER_INTERFACE_H
 
+#pragma once
 
+// Library includes
+
+// Project includes
+#include "Object.h"
 #include "UI\UIObject.h"
-#include "Main.h"
 
 
 extern UI::CUIManager		GUI;
@@ -28,5 +30,3 @@ void Mainform_MultiplayerClick();
 void Mainform_QuitClick();
 void Mainform_SettingsClick();
 
-
-#endif

@@ -1,4 +1,11 @@
-#include "Main.h"
+
+// Library includes
+#include <cstring>
+#include <stdio.h>
+
+// Project includes
+#include "Chat.h"
+#include "EngineUtils.h"
 
 
 CChatMessage::CChatMessage()

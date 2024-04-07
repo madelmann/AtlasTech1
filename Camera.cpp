@@ -1,4 +1,13 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "Camera.h"
+#include "Game.h"
+#include "Globals.h"
+#include "GLWrapper.h"
+#include "Normals.h"
+#include "Tools.h"
 
 
 // This is how fast our camera moves
@@ -305,7 +314,7 @@ void CFPSCamera::MoveCamera(float speed)
 	{
 		if(g_iLocalPlayer >= 0)
 		{
-			CGraphicObject gobj = g_Manager_Player.Player[g_iLocalPlayer];
+			CGraphicObject gobj = g_Manager_Player->Player[g_iLocalPlayer];
 
 			gobj.mPosition.x += vVector.x * speed;
 
@@ -486,7 +495,7 @@ void CFPSCamera::StrafeCamera(float speed)
 	{
 		if(g_iLocalPlayer >= 0)
 		{
-			CGraphicObject gobj = g_Manager_Player.Player[g_iLocalPlayer];
+			CGraphicObject gobj = g_Manager_Player->Player[g_iLocalPlayer];
 
 			gobj.mPosition.x += m_vStrafe.x * speed;
 

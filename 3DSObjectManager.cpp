@@ -1,10 +1,17 @@
 
-#include "Main.h"
-#include "3dsloader.h"
+// Library includes
+
+// Project includes
+#include "3DSObjectManager.h"
+#include "Console.h"
+#include "Editor.h"
+#include "Game.h"
+#include "Globals.h"
+#include "Normals.h"
+#include "Shader.h"
 
 
 CMesh3DS::CMesh3DS()
-: CGraphicObject()
 {
 	BoundingVolumeType = BoundingVolume::Sphere;
 	mCollisionVolumeType = BoundingVolume::Box;
@@ -81,7 +88,7 @@ void CMesh3DS::CalcVertexNormals()
 			}
 		}
 	}
-	catch (exception& e) {
+	catch ( std::exception& e ) {
 		throw e.what();
 	}
 }
@@ -136,7 +143,7 @@ void CMesh3DS::PreProcess()
 	// LOD...
 	gluivMeshID_LOD[0] = iMeshID;
 
-	for(int i = 1; i < Engine->iMaxLODLevel; i += 1)
+	for(int i = 1; i < g_iMaxLODLevel; i += 1)
 	{
 		// Destroy display list if already exists.
 		if(glIsList(gluivMeshID_LOD[i]))
@@ -166,8 +173,9 @@ void CMesh3DS::Render()
 {
 	GLuint gluiList = iMeshID;
 	
-	if(Game.bPlayMode)															// only apply LOD in game mode
-		gluiList = gluivMeshID_LOD[GetLODLevel((CGraphicObject*)this)];
+	if (Game.bPlayMode)															// only apply LOD in game mode
+		//gluiList = gluivMeshID_LOD[GetLODLevel((CGraphicObject*)this)];
+		gluiList = 1;
 	
 	if(!glIsList(gluiList))
 		gluiList = iMeshID;
@@ -190,7 +198,7 @@ void CMesh3DS::RenderWithoutDisplayList(int iLODLevel)
 		if ( iNormalMap ) {
 			glActiveTextureARB(GL_TEXTURE0_ARB);
 			glEnable(GL_TEXTURE_2D); 
-			Texture_SetActiveID(iNormalMap);
+			g_Manager_Texture->SetActiveTextureID(iNormalMap);
 		}
 
 		glActiveTextureARB(GL_TEXTURE1_ARB);
@@ -203,13 +211,13 @@ void CMesh3DS::RenderWithoutDisplayList(int iLODLevel)
 	if(!g_Manager_Material.Materials[iMaterial].bEnvironmentalMapping)
 	{
 		if(strcmpi(g_Manager_Material.Materials[iMaterial].Texture, "none") != 0)
-			Texture_SetActive(g_Manager_Material.Materials[iMaterial].Texture);
+			g_Manager_Texture->SetActiveTextureID(g_Manager_Material.Materials[iMaterial].Texture);
 		else
-			Texture_SetActiveID(iTexture);
+			g_Manager_Texture->SetActiveTextureID(iTexture);
 	}
 
 	if ( mShader ) {
-		int uniform = glGetUniformLocationARB(Shader->GetProgram(), "colorMap"); 
+		int uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "colorMap"); 
 		glUniform1iARB(uniform, 1);
 	}
 
@@ -391,7 +399,7 @@ int C3DSObjectManager::Add(char *Filename)
 	Load3DS(&Mesh.back()->Model[0], fname);
 
 	sprintf_s(buffer, "%s.material", Filename);
-	Mesh.back()->iMaterial = Material_Add(buffer);
+	Mesh.back()->iMaterial = g_Manager_Material.Add(buffer);
 	if(Mesh.back()->iMaterial != -1)
 		Mesh.back()->iTexture = g_Manager_Material.Materials[Mesh.back()->iMaterial].iTexture;
 
@@ -404,13 +412,13 @@ int C3DSObjectManager::Add(char *Filename)
 	if(Mesh.back()->iMaterial == -1)
 	{
 		sprintf_s(buffer, "default.material");
-		Mesh.back()->iMaterial = Material_Add(buffer);
+		Mesh.back()->iMaterial = g_Manager_Material.Add(buffer);
 
 		sprintf(Mesh.back()->cTexture, "%s", Filename);
 
 		sprintf_s(buffer, "%s.bmp", Filename);
 
-		Mesh.back()->iTexture = Texture_Add(buffer);
+		Mesh.back()->iTexture = g_Manager_Material.Add(buffer);
 	}
 
 	//if(Mesh.back()->iTexture == 0)
@@ -425,7 +433,7 @@ int C3DSObjectManager::Add(char *Filename)
 	// Load LOD models
 	bool err = false;
 
-	for(int i = 1; i < Engine->iMaxLODLevel; i += 1)
+	for(int i = 1; i < g_iMaxLODLevel; i += 1)
 	{
 		err = false;
 
@@ -499,9 +507,9 @@ int C3DSObjectManager::IndexOfId(int id)
 	return -1;
 }
 
-bool C3DSObjectManager::ObjectExists(char ObjName[255])
+bool C3DSObjectManager::ObjectExists(char* objectname)
 {
-	int index = IndexOf(ObjName);
+	int index = IndexOf(objectname);
 
 	if(index != -1)
 	{

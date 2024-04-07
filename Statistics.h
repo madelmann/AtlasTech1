@@ -1,8 +1,9 @@
-#ifndef _STATISTICMANAGER_H
-#define _STATISTICMANAGER_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
 
 
 class CStatistic
@@ -33,5 +34,3 @@ public:
 	int			iSortColumn;
 	CStatistic	Statistic[MAX_CLIENTS];
 };
-
-#endif

@@ -1,13 +1,16 @@
-#ifndef _PLAYER_H
-#define _PLAYER_H
 
+#pragma once
 
-//#include "Engine.h"
-#include "Main.h"
+// Library includes
+#include <RakNetTypes.h>
+
+// Project includes
+#include "Object.h"
+#include "Tools.h"
 #include "Weapon.h"
 
 
-#define MAX_WAYPOINTS	8
+#define MAX_CLIENTS		32
 #define pSpeed	20.0f
 
 
@@ -79,5 +82,3 @@ public:
 	int		iMaxPlayers;
 	CPlayer	Player[MAX_CLIENTS];
 };
-
-#endif

@@ -1,4 +1,9 @@
+
+// Library includes
+
+// Project includes
 #include "Main.h"
+#include "Weapon.h"
 
 
 CWeapon::CWeapon()

@@ -1,4 +1,13 @@
-#include "Main.h"
+
+// Library includes
+#include <cstring>
+
+// Project includes
+#include "BasicInterpreter.h"
+#include "Console.h"
+#include "Game.h"
+#include "Globals.h"
+#include "Tools.h"
 
 /* Assign a variable a value. */
 void CBasicInterpreter::assignment()
@@ -1144,7 +1153,7 @@ long CBasicInterpreter::Prepare(char *fname)
 	return 0;
 }
 
-unsigned long ThreadEntry(LPVOID Data)
+unsigned long ThreadEntry(void* Data)
 {
 	CBasicInterpreter* interpreter = new CBasicInterpreter;
 	interpreter->Prepare((char*)Data);

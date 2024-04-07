@@ -1,15 +1,14 @@
-#include "Adventure.h"
 
-#include "Engine.h"
+// Library includes
+
+// Project includes
+#include "Adventure.h"
+#include "Tools.h"
 
 
 CAdventure::CAdventure()
 {
 	iMaps = 1;
-}
-
-CAdventure::~CAdventure()
-{
 }
 
 void CAdventure::Load(char Filename[255])

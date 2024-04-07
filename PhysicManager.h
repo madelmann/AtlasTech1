@@ -1,8 +1,12 @@
-#ifndef _PHYSIC_MANAGER_H
-#define _PHYSIC_MANAGER_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+#include <vector>
+
+// Project includes
+#include "Object.h"
+#include "Tools.h"
 
 
 class CPhysicManager
@@ -19,8 +23,6 @@ public:
 
 private:
 	int						Count;
-	CVector3				mGravity;
-	vector<CPhysicObject>	mObjects;
+	CVector3 				mGravity;
+	std::vector<CPhysicObject>	mObjects;
 };
-
-#endif

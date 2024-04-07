@@ -1,6 +1,10 @@
+
+// Library includes
 #include <windows.h>				// The windows header file.
-#include <gl/gl.h>					// Standard opengl include.
+
+// Project includes
 #include "Font.h"					// Our font class header.
+#include "GLWrapper.h"
 
 
 extern GLuint Texture_Add(char* Filename);
@@ -36,10 +40,10 @@ int CGLFont::GetFontSize()
 }
 
 // Initialize font.
-bool CGLFont::Initialize(HDC hDC, int Size, char *fontName)
+bool CGLFont::Initialize(HDC hDC, int size, char *fontName)
 {
 	// Create the font list.
-	listBase = InitFont(fontName, Size, hDC);
+	listBase = InitFont(fontName, size, hDC);
 
 	if(listBase == 0)
 		return false;
@@ -123,7 +127,7 @@ bool CGLFont::PrintText(char *string, float x, float y)
 	return true;
 }
 
-bool CGLFont::PrintText(string text, float x, float y)
+bool CGLFont::PrintText(std::string text, float x, float y)
 {
 	// Error checking...
 	if((listBase == 0 || text.length() <= 0))
@@ -190,7 +194,7 @@ void CGLFont::drawChar(char ch, float x, float y)
 	glVertex2f(x + 25.f, y);
 }
 
-void CGLFont::drawString(const string &str, float x, float y)
+void CGLFont::drawString(const std::string &str, float x, float y)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 

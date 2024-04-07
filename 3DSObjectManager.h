@@ -1,28 +1,12 @@
 
-#ifndef _3DSOBJECTMANAGER_H
-#define _3DSOBJECTMANAGER_H
+#pragma once
 
-
+// Library includes
 #include <vector>
 
-#include "Main.h"
+// Project includes
 #include "3dsloader.h"
-
-
-
-#define MAX_LODLEVELS	3
-
-
-typedef struct
-{
-	char name[20];
-
-	std::vector<vertex_type> normal;
-	std::vector<vertex_type> vertex;
-	std::vector<polygon_type> polygon;
-	std::vector<mapcoord_type> mapcoord;
-
-} Mesh3DS_t;
+#include "Object.h"
 
 
 class CMesh3DS : public CGraphicObject
@@ -51,14 +35,12 @@ class C3DSObjectManager
 public:
 		C3DSObjectManager();
 		~C3DSObjectManager();
+
 		int Add(char *Filename);
 		void Clear();
 		inline int IndexOf(char* objectname);
 		int IndexOfId(int id);
-		bool ObjectExists(char ObjName[255]);
+		bool ObjectExists(char* objectname);
 
-		//CMesh3DS	Object[MAX_3DSOBJECTS];
 		std::vector<CMesh3DS*> Mesh;
 };
-
-#endif

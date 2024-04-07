@@ -1,9 +1,10 @@
-#ifndef _FONT_H
-#define _FONT_H
 
+#pragma once
 
+// Library includes
 #include <string>
-using std::string;
+
+// Project includes
 
 
 typedef struct
@@ -26,10 +27,10 @@ public:
 	int GetFontSize();															// Returns font's size
 	bool Initialize(HDC hDC, int size, char *fontName);							// Initialize font.
 	bool PrintText(char *string, float x, float y);
-	bool PrintText(string text, float x, float y);								// Print the text.
+	bool PrintText(std::string text, float x, float y);								// Print the text.
 	void SetWidthHeight(int w, int h);											// Set the window size.
 
-	void drawString(const string &str, float x, float y);
+	void drawString(const std::string &str, float x, float y);
 	void selectFont(char* font, float size = 1.f);
 	void selectFont(int texture, float size = 1.f);
 
@@ -46,5 +47,3 @@ private:
 
 	Font_t	mFont;
 };
-
-#endif

@@ -1,8 +1,11 @@
-#ifndef _PARTICLESYSTEM_H_
-#define _PARTICLESYSTEM_H_
 
-#include "Main.h"
-//#include "vector3f.h"
+#pragma once
+
+// Library includes
+
+// Project includes
+#include "Object.h"
+#include "Tools.h"
 
 
 #define PARTICLE_MAX	100
@@ -165,7 +168,7 @@ private:
 	bool			mLocked;
 	bool			mLoop;
 	CVector3*		mPositionPointer;
-	CGraphicObject	*mSource;
+	CGraphicObject* mSource;
 };
 
 
@@ -183,5 +186,3 @@ public:
 	int iActive;
 	CParticleSystem Object[PARTICLE_MAX];
 };
-
-#endif

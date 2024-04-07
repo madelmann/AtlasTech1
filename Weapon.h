@@ -1,8 +1,10 @@
-#ifndef _WEAPON_H
-#define _WEAPON_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Tools.h"
 
 
 #define WEAPON_VERSION_1		8
@@ -39,5 +41,3 @@ public:
 	int			iVersion;
 	CVector3	vDrawPosition;
 };
-
-#endif

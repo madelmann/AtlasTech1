@@ -1,7 +1,10 @@
-#ifndef _SERVER_H
-#define _SERVER_H
 
-#include "main.h"
+#pragma once
+
+// Library includes
+
+// Project includes
+#include "Main.h"
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
@@ -23,5 +26,3 @@ public:
     char recvbuf[DEFAULT_BUFLEN];
     int iResult, iSendResult;
 };
-
-#endif

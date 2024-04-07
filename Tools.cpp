@@ -1,4 +1,21 @@
+
+// Library includes
+
+// Project includes
 #include "Tools.h"
+
+
+double round(double r)
+{
+    return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
+}
+
+/*
+float round(float r)
+{
+    return (r > 0.0f) ? floor(r + 0.5f) : ceil(r - 0.5f);
+}
+*/
 
 
 CScreen::CScreen()

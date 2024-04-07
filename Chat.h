@@ -1,7 +1,10 @@
-#ifndef _CHAT_H
-#define _CHAT_H
 
-#include "Main.h"
+#pragma once
+
+// Library includes
+
+// Project includes
+
 
 #define MAX_CHATMESSAGES 8
 
@@ -32,5 +35,3 @@ public:
 	int iVisibleMessages;
 	CChatMessage Messages[100];
 };
-
-#endif

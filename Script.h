@@ -1,16 +1,16 @@
-#ifndef _SCRIPT_H
-#define _SCRIPT_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
 
 
 class CScriptManager
 {
 public:
 	CScriptManager();
+
 	int Execute(char Filename[255], bool bInScriptFolder, bool bExecute);
 	int ExecuteCommand(char Command[255]);
 };
-
-#endif

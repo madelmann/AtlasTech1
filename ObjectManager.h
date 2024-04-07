@@ -1,10 +1,12 @@
 
-#ifndef _ObjectManager_h_
-#define _ObjectManager_h_
+#pragma once
 
-
+// Library includes
 #include <string>
 #include <vector>
+
+// Project includes
+
 
 using namespace std;
 
@@ -44,5 +46,3 @@ private:
 	unsigned int mActive;
 	vector<GameObject_t> mObjects;
 };
-
-#endif

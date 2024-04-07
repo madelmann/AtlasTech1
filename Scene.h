@@ -1,13 +1,18 @@
-#ifndef _SCENE_H
-#define _SCENE_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
 #include <algorithm>
 #include <list>
 #include <vector>
 
-using namespace std;
+// Project includes
+//#include "Object.h"
+#include "Tools.h"
+
+
+class CGraphicObject;
+
 
 class CSceneID
 {
@@ -98,8 +103,8 @@ public:
 	GLuint				gluiQueryResultAvailible;
 	GLuint				gluiSamples;
 	CGraphicObject*		go;
-	list<CMotion*>		Motion;
-	vector<CSceneID>	Nodes;
+	std::list<CMotion*>		Motion;
+	std::vector<CSceneID>	Nodes;
 	unsigned int		uiOcclusionCalculatedBeforeFPS;
 
 private:
@@ -155,19 +160,13 @@ public:
 	int		iHoverObject;
 	char	sHoverMessage[255];
 
-//private:
-	list<CSceneObject> SceneObjects;
-	list<CTimedOperation> TimedOperations;
+	std::list<CSceneObject> SceneObjects;
+	std::list<CTimedOperation> TimedOperations;
 
 private:
 	bool		bRenderWater;
 	CVector3	mCameraPosition;
 
-	list<CSceneObject>::iterator getInsertIndex(list<CSceneObject>::iterator it);
+	std::list<CSceneObject>::iterator getInsertIndex(std::list<CSceneObject>::iterator it);
 };
 
-
-bool preventDuplicates(list<CSceneID>& vec, int child);
-
-
-#endif

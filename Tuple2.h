@@ -6,6 +6,11 @@
 #ifndef TUPLE2_H
 #define TUPLE2_H
 
+ // Library includes
+
+ // Project includes
+
+
 template <class T2>
 class Tuple2
 {

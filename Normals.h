@@ -1,7 +1,9 @@
-#ifndef _NORMALS_H
-#define _NORMALS_H
 
+#pragma once
 
+// Library includes
+
+// Project includes
 #include "Tools.h"
 
 
@@ -23,5 +25,3 @@ public:
 CVector3 Normalize(CVector3 vVector);
 
 void GetNormal(CVector3 v[3], CVector3 *normal);
-
-#endif

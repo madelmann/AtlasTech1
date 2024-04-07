@@ -1,8 +1,10 @@
-#ifndef _STATICOBJECT_H
-#define _STATICOBJECT_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Object.h"
 
 
 typedef struct tagVERTEX
@@ -27,12 +29,10 @@ typedef struct tagSECTOR
 
 class CStaticObject : public CGraphicObject
 {
-private:
-		int LowestPoint();
-		void SetSelectionIndicator();
 public:
 		CStaticObject();
 		~CStaticObject();
+
 		void CalcVertexNormals();
 		int DeepCollision(CVector3 vColPos, float radius);
 		void PreProcess();
@@ -43,6 +43,10 @@ public:
 
 		long			iLowestPoint;
 		SECTOR			Model;
+
+private:
+	int LowestPoint();
+	void SetSelectionIndicator();
 };
 
 class CStaticObjectManager
@@ -50,6 +54,7 @@ class CStaticObjectManager
 public:
 		CStaticObjectManager();
 		~CStaticObjectManager();
+
 		int Add(char Filename[255]);
 		void Clear();
 		int IndexOf(char* objectname);
@@ -60,5 +65,3 @@ public:
 		int				iActive;
 		CStaticObject	Object[1000];
 };
-
-#endif

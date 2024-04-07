@@ -1,6 +1,10 @@
+
+// Library includes
+
 #include <iostream>
 #include <GL\gl.h>
 
+// Project includes
 #include "Error.h"
 
 

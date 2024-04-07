@@ -1,6 +1,9 @@
-#ifndef _AABBOX_H
-#define _AABBOX_H
 
+#pragma once
+
+// Library includes
+
+// Project includes
 #include "..\Tools.h"
 
 namespace Misc
@@ -144,6 +147,3 @@ public:
 */
 
 }
-
-
-#endif

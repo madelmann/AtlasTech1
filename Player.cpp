@@ -1,3 +1,7 @@
+
+// Library includes
+
+// Project includes
 #include "Main.h"
 #include "QuadTree.h"
 

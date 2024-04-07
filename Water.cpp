@@ -1,4 +1,9 @@
+
+// Library includes
+
+// Project includes
 #include "Main.h"
+#include "Water.h"
 
 
 // This is used for the scaling of our normal map texture.
@@ -314,7 +319,7 @@ void CWater::Render()
 	// Below is where we draw our quad for the water.  Before we start
 	// giving out UV coordinates for each texture unit, we need to create
 	// some variables to store each one.  The dudv and depth map has it's
-	// UV coordinates calculated in the shader.  This is why below we set
+	// UV coordinates calculated in the g_Manager_Shader.  This is why below we set
 	// the UV coordinates to 0 to show they aren't set in the code.
 	// When you run this application you will notice that the water is moving.
 	// To give this effect we create a static float call "move" that slowly
@@ -339,31 +344,31 @@ void CWater::Render()
 	// Move the water by our global speed
 	move += Map.fWaterFlow * g_fElpasedTime;
 
-	Shader->Begin("Water");
+	g_Manager_Shader->Begin("Water");
 
 		GLint uniform;
 		// Set the variable "reflection" to correspond to the first texture unit
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "reflection"); 
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "reflection"); 
 		glUniform1iARB(uniform, REFLECTION_ID); //second paramter is the texture unit 
 
 		// Set the variable "refraction" to correspond to the second texture unit
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "refraction");
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "refraction");
 		glUniform1iARB(uniform, REFRACTION_ID); 
 
 		// Set the variable "normalMap" to correspond to the third texture unit
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "normalMap");
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "normalMap");
 		glUniform1iARB(uniform, NORMAL_ID);
 
 		// Set the variable "dudvMap" to correspond to the fourth texture unit
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "dudvMap"); 
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "dudvMap"); 
 		glUniform1iARB(uniform, DUDVMAP_ID);
 
 		// Set the variable "depthMap" to correspond to the fifth texture unit
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "depthMap");
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "depthMap");
 		glUniform1iARB(uniform, DEPTH_ID); 
 
 		// Give the variable "waterColor" a blue color
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "waterColor");
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "waterColor");
 		//glUniform4fARB(uniform, 0.1f, 0.1f, 0.2f, 1.0f);
 		glUniform4fARB(uniform, Map.vWaterColor.x, Map.vWaterColor.y, Map.vWaterColor.z, 1.0f);
 
@@ -372,14 +377,14 @@ void CWater::Render()
 		CVector3 lightPos = Light[LIGHT_SUN].getPosition();
 
 		// Give the variable "lightPos" our light position
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "lightPos");
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "lightPos");
 		glUniform4fARB(uniform, lightPos.x, lightPos.y * -1, lightPos.z, (GLfloat)Light[LIGHT_SUN].getMode()); 
 
 		// Store the camera position in a variable
 		CVector3 camera = g_Camera.Position();
 
 		// Give the variable "cameraPos" our camera position
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "cameraPos");
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "cameraPos");
 		glUniform4fARB(uniform, camera.x, camera.y, camera.z, 1.0f);
 
 		// Draw our huge water quad
@@ -428,7 +433,7 @@ void CWater::Render()
 			//glMultiTexCoord2fARB(GL_TEXTURE4_ARB, g_WaterUV, 0.0f);						// Depth texture
 			glVertex3f(QuadTree.fTerrainXStart, Map.fWaterHeight, QuadTree.fTerrainZEnd);	// 0, 1
 		glEnd();
-	Shader->End();
+	g_Manager_Shader->End();
 
 	// Turn the fifth multi-texture pass off
 	glActiveTextureARB(GL_TEXTURE4_ARB);

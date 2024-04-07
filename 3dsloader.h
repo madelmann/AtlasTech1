@@ -3,6 +3,14 @@
 #define _3DSLOADER_H
 
 
+// Library includes
+#include <vector>
+
+// Project includes
+
+
+#define MAX_LODLEVELS	3
+
 #define MAX_VERTICES 8000 // Max number of vertices (for each object)
 #define MAX_POLYGONS 8000 // Max number of polygons (for each object)
 
@@ -42,6 +50,18 @@ typedef struct
     mapcoord_type mapcoord[MAX_VERTICES];
     int id_texture;
 } obj_type, * obj_type_ptr;
+
+
+typedef struct
+{
+    char name[20];
+
+    std::vector<vertex_type> normal;
+    std::vector<vertex_type> vertex;
+    std::vector<polygon_type> polygon;
+    std::vector<mapcoord_type> mapcoord;
+
+} Mesh3DS_t;
 
 
 

@@ -1,4 +1,9 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "EngineUtils.h"
+#include "QuadTree.h"
 #include "Tools.h"
 
 

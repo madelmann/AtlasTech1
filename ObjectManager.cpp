@@ -138,7 +138,7 @@ void CObjectManager::process(string filename)
 
 	go->setMaterial(g_Manager_Material.Add(const_cast<char*>(mObjects.back().Material.c_str())));
 	go->setNormalMap(g_Manager_Texture->CreateTexture(const_cast<char*>(mObjects.back().NormalMap.c_str())));
-	go->setShader(Shader->Add(const_cast<char*>(mObjects.back().Shader.c_str())));
+	go->setShader(g_Manager_Shader->Add(const_cast<char*>(mObjects.back().Shader.c_str())));
 	go->setTexture(g_Manager_Texture->CreateTexture(const_cast<char*>(mObjects.back().Texture.c_str())));
 	go->PreProcess();
 

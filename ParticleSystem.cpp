@@ -1,4 +1,10 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "Editor.h"
+#include "EngineUtils.h"
+#include "ParticleSystem.h"
 
 
 int RangedRandom( int range_min, int range_max )

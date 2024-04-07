@@ -1,4 +1,9 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "Frustum.h"
+#include "Object.h"
 
 
 inline float fastSquareRoot(float x)

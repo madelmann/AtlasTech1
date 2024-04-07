@@ -1,8 +1,11 @@
-#ifndef _TERRAIN_H
-#define _TERRAIN_H
 
+#pragma once
 
+// Library includes
+
+// Project includes
 #include "Normals.h"
+#include "Tools.h"
 
 
 #define MAP_SIZE		256				// This is the size of our .raw height map
@@ -35,4 +38,3 @@ void RenderHeightMapXY(BYTE *pHeightMap, float posx, float posy, float posz);
 
 void ModifyHeightMap(BYTE *pHeightMap, int X, int Y, int Delta);
 
-#endif

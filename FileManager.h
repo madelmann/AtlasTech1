@@ -1,8 +1,11 @@
-#ifndef _FILEMANAGER_H
-#define _FILEMANAGER_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+#include <string>
+#include <vector>
+
+// Project includes
 
 
 class CFileManager
@@ -10,8 +13,5 @@ class CFileManager
 public:
 	int Searchfiles(char *path, char *ext);
 
-	vector<string> filelist;
+	std::vector<std::string> filelist;
 };
-
-
-#endif

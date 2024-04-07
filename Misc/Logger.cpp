@@ -1,7 +1,10 @@
-#include "Logger.h"
 
+// Library includes
 #include <iostream>
 #include <stdarg.h>
+
+// Project includes
+#include "Logger.h"
 
 
 Logger::Logger(char *filename)

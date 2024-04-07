@@ -1,4 +1,8 @@
-#include "Main.h"
+
+// Library includes
+
+// Project includes
+#include "TGA.h"
 
 
 TGAImg::TGAImg()

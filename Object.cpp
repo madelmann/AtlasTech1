@@ -1,4 +1,10 @@
-#include "Main.h"
+
+// Library includes
+#include "GLWrapper.h"
+
+// Project includes
+#include "Object.h"
+#include "Shader.h"
 
 
 void RenderLineBox(AABBVolume BoundingBox)

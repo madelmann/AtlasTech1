@@ -7,8 +7,12 @@
 #define TUPLE4
 
 
+ // Library includes
 #include <iostream>
+
+ // Project includes
 #include "Tuple3.h"
+
 
 using namespace std;
 

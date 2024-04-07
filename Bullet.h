@@ -1,15 +1,17 @@
-#ifndef _BULLET_H
-#define _BULLET_H
 
+#pragma once
 
-#include "Main.h"
+// Library includes
+
+// Project includes
+#include "Object.h"
+#include "Tools.h"
 
 
 class CBullet : public CGraphicObject
 {
 public:
 	CBullet();
-	~CBullet();
 
 	int Collision();
 	void Move();
@@ -37,5 +39,3 @@ public:
 	int Count;
 	CBullet Bullet[1000];
 };
-
-#endif

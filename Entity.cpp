@@ -1,9 +1,11 @@
 
-#include "Main.h"
+// Library includes
+#include <vector>
+
+// Project includes
+#include "EngineUtils.h"
+#include "Entity.h"
 #include "Tools.h"
-
-
-CLoadMD2 g_LoadMd2;												// This is MD2 class.  This should go in a good model class.
 
 
 CEntity::CEntity()
@@ -19,7 +21,7 @@ CEntity::CEntity()
 
 CEntity::~CEntity()
 {
-	for(vector<t3DObject>::iterator it = Model.pObject.begin(); it != Model.pObject.end(); it += 1)
+	for(std::vector<t3DObject>::iterator it = Model.pObject.begin(); it != Model.pObject.end(); it += 1)
 	{
 		//delete [] it->pVerts;
 		//delete [] it->pNormals;
@@ -71,7 +73,7 @@ void CEntity::Render()
 		int uniform = glGetUniformLocationARB(mShader->GetProgram(), "normalMap");
 		glUniform1iARB(uniform, 0);
 
-		uniform = glGetUniformLocationARB(Shader->GetProgram(), "colorMap"); 
+		uniform = glGetUniformLocationARB(g_Manager_Shader->GetProgram(), "colorMap"); 
 		glUniform1iARB(uniform, 1);
 	}
 
@@ -383,7 +385,8 @@ int CEntityManager::Add(char Filename[255], char Texname[255])
 		else
 			sprintf(Object[Count].cTexture, "Models\\%s\\%s.bmp", Filename, Texname);
 
-		g_LoadMd2.ImportMD2(&Object[Count].Model, fname, Object[Count].cTexture);
+		CLoadMD2 loadMd2;
+		loadMd2.ImportMD2(&Object[Count].Model, fname, Object[Count].cTexture);
 
 		Object[Count].setId(Count);
 		Object[Count].iType = EditorSpace::md2;
